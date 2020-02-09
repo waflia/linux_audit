@@ -1,3 +1,4 @@
+"""Основной модуль программы"""
 #!usr/bin/python3
 from tkinter import Toplevel, BOTH, LEFT, TRUE, FALSE
 from tkinter import ttk
@@ -53,8 +54,8 @@ else:
     corr = False
 
 
-# Обработчик нажатия кнопки в окне ввода пароля
 def button_click(event):
+    """Функция-обработчик нажатия кнопки подтверждения пароля"""
     password = pass_Entry.get()
     pass_Label.configure(text=password)
     if(correct(password)):
@@ -68,8 +69,8 @@ def button_click(event):
         pass_Label['text'] = 'Неверный пароль!'
 
 
-# Проверка корректности пароля
 def correct(pas):
+    """Функция проверки корректности пароля"""
     sudopas = run('sudo -S a\n', shell=True, stdout=PIPE, stderr=PIPE, input=bytes(pas + '\n', 'utf-8'))
     out = sudopas.stderr.decode('utf-8')
     if out == '':
