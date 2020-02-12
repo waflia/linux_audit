@@ -44,9 +44,11 @@ class log_Tab(object):
 
 
 def write_log(text):
-    file = open('test/logs.txt', 'a')
-    last_log = open('test/last.txt', 'a')
-    last_log.write(text)
-    file.write(text)
-    file.close()
+    try:
+        with open('test/logs.txt', 'a') as file:
+            last_log = open('test/last.txt', 'a')
+            last_log.write(text)
+            file.write(text)
+    except FileNotFoundError:
+        mb.showinfo("", "Файл test/last.txt не найден")
     last_log.close()

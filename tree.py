@@ -113,7 +113,7 @@ class Tree(object):
             self.selected_dirs.remove(item)
 
     def data_update(self, event):
-    # Изменение размера горизонтального ползунка
+        """Изменение размера горизонтального ползунка"""
         col_len = len(self.tree_files[self.tree.parent(self.tree.selection()[0])])*7 + len(self.tree.item(self.tree.selection()[0])['text'])*7
 
         if col_len > self.tree.column('#0', 'width'):

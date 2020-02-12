@@ -48,7 +48,7 @@ out = sudopas.stderr.decode('utf-8')
 if out == '':
     out = sudopas.stdout.decode('utf-8')
 
-if 'sudo: a:' in out:
+if 'sudo a:' in out:
     corr = True
 else:
     corr = False
@@ -87,12 +87,12 @@ def root_quit():
 
 
 def change_tab(event):
-    file = open('test/last.txt', 'w')
-    file.close()
-    file = open('test/last.txt', 'r')
-    text = file.read()
-    log.set_text(text)
-    file.close()
+    try:
+        with open('test/last.txt', 'r') as file:
+            text = file.read()
+            log.set_text(text)
+    except FileNotFoundError:
+        mb.showinfo("", "Файл test/last.txt не найден")
 
 
 if not corr:
