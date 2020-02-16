@@ -2,7 +2,7 @@ import os
 import datetime
 import tkinter as tk
 import tkinter.ttk as ttk
-from commands import *
+from commands import command_seq
 from tree import Tree
 from Log import write_log
 
@@ -137,6 +137,11 @@ class Base_Tab(object):
                 vulnerable = True
         if not vulnerable:
             self.result.insert('end', ' Объекты с полными правами для категории "Все остальные" не обнаружены\n')
+        else:
+            self.result.insert('end', "\nРекомендация:\n"
+	        + "Необходимо исключить полный доступ постановкой на каталоги прав 755 ,\n"
+            + " у файлов - прав 644 .\n" 
+            +"Либо поставить любую другую комбинацию прав, не нарушающую безопасности данного объекта и общей безопасности системы.\n\n" )
         return
 
     def check_owner_permissions(self):
@@ -156,6 +161,10 @@ class Base_Tab(object):
                         break
         if not vulnerable:
             self.result.insert('end', ' Объекты с неправильно настроенными правами владельца не обнаружены\n')
+        else:
+            self.result.nsert('end', "\nРекомендация:\n"
+	        + "Необходимо установить правильные права владельца на объект,\n"
+            +"Либо поставить любую другую комбинацию прав, не нарушающую безопасности данного объекта и общей безопасности системы.\n\n" )
         return
 
     def check_system(self):
@@ -170,6 +179,10 @@ class Base_Tab(object):
 
         if not vulnerable:
             self.result.insert('end', ' Режимы доступа системных объектов соответствуют рекомендуемым\n')
+        else:
+            self.result.insert('end', "\nРекомендация:\n"
+	        + "Убедитесь, что режимы доступа системных объектов не создают потенциальных угроз.\n"
+            +"Если необходимо, то измените их на рекомендуемые.\n\n" )
         return
 
     def check_none_permissions(self):
@@ -189,6 +202,10 @@ class Base_Tab(object):
 
         if not vulnerable:
             self.result.insert('end', ' Права доступа к объектам не нарушены\n')
+        else:
+            self.result.insert('end', "\nРекомендация:\n"
+	        + "Необходимо проверить режимы доступа объектов на доступность файлов и каталогов\n"
+            +"Если необходимо, то измените режимы доступа с помощью команд chmod <perms> object.\n\n" )
         return
 
     def check_unvisible(self):
@@ -205,6 +222,11 @@ class Base_Tab(object):
 
         if not vulnerable:
             self.result.insert('end', ' Необходимые права на чтение каталогов не нарушены\n')
+        else:
+            self.result.nsert('end', "\nРекомендация:\n"
+	        + "Необходимо исключить полный доступ постановкой на каталоги прав 755 ,\n"
+            + " у файлов - прав 644 .\n" 
+            +"Либо поставить любую другую комбинацию прав, не нарушающую безопасности данного объекта и общей безопасности системы.\n\n" )
         return
 
     def check_none_og(self):
@@ -226,6 +248,10 @@ class Base_Tab(object):
 
         if not vulnerable:
             self.result.insert('end', ' Объекты без владельца и группы не обнаружены\n')
+        else:
+            self.result.insert('end', "\nРекомендация:\n"
+	        + 'Необходимо установить объектам владельца отдельного от "nobody" и группы "nogroup"\n'
+            + 'с помощью команды chown <user> object и chgrp <group> object.\n\n' )
         return
 
     def check_suid(self):
@@ -240,6 +266,10 @@ class Base_Tab(object):
 
         if not vulnerable:
             self.result.insert('end', ' Объекты с SUID-битом не обнаружены\n')
+        else:
+            self.result.nsert('end', "\nРекомендация:\n"
+	        + "Убедитесь, что SUID-бит необходим и не нарушает безопасности системы.\n"
+            + "Либо установите любую другую комбинацию прав, не нарушающую безопасности данного объекта и общей безопасности системы.\n\n" )
         return
 
     def check_sgid(self):
@@ -254,6 +284,10 @@ class Base_Tab(object):
 
         if not vulnerable:
             self.result.insert('end', ' Объекты со SGID-битом не обнаружены\n')
+        else:
+            self.result.nsert('end', "\nРекомендация:\n"
+	        + "Убедитесь, что SGID-бит необходим и не нарушает безопасности системы.\n"
+            + "Либо установите любую другую комбинацию прав, не нарушающую безопасности данного объекта и общей безопасности системы.\n\n" )
         return
 
     def check_sticky(self):
@@ -268,4 +302,8 @@ class Base_Tab(object):
 
         if not vulnerable:
             self.result.insert('end', ' Объекты со Sticky-битом не обнаружены\n')
+        else:
+            self.result.nsert('end', "\nРекомендация:\n"
+	        + "Убедитесь, что Sticky-бит необходим и не нарушает безопасности системы.\n"
+            + "Либо установите любую другую комбинацию прав, не нарушающую безопасности данного объекта и общей безопасности системы.\n\n" )
         return

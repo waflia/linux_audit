@@ -96,6 +96,8 @@ class AppArmor_Tab(object):
             self.result.insert('end', status[0])
         else:
             self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'))
+            self.result.insert("Рекомендация:\n"
+		        + "Настройте AppArmor при помощи установки соответствующих пакетов и библиотек.\n\n") 
         return
 
     def check_sysprofiles(self):
@@ -121,6 +123,8 @@ class AppArmor_Tab(object):
                 self.result.insert('end', '{}\n'.format('Все основные профили загружены и настроены'))
         else:
             self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'), 'title')
+            self.result.insert("Рекомендация:\n"
+		        + "Настройте AppArmor при помощи установки соответствующих пакетов и библиотек и проверьте наличие необходимых модулей\n\n") 
 
         return
 
@@ -134,6 +138,9 @@ class AppArmor_Tab(object):
             self.result.insert('end', unconfined_profiles)
         else:
             self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'))
+            self.result.insert("Рекомендация:\n"
+		        + "Настройте AppArmor при помощи установки соответствующих пакетов и библиотек.\n"
+                + "Убедитесь, что необходимые профили загружены и включены.\n\n") 
         return
 
     def check_logs(self):
@@ -146,4 +153,6 @@ class AppArmor_Tab(object):
             self.result.insert('end', logs)
         else:
             self.result.insert('end', '{}\n'.format(' Модуль AppArmor остановлен или отсутствует'))
+            self.result.insert('end', "Рекомендация:\n"
+		        + "Включите AppArmor если он отключен или настройте его при помощи установки соответствующих пакетов и библиотек.\n\n") 
         return

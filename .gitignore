@@ -1,3 +1,6 @@
 __pycache__/
 .vscode/
 1.code-workspace
+dist/
+MANIFEST
+setup.py

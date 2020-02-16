@@ -96,6 +96,8 @@ class net_Tab(object):
             for row in list(filter(None, tcp_status)):
                 splitted_row = list(filter(None, row.split(' ')))
                 self.result.insert('end', ' {0:<4} {1:<17} {2:<17} {3:<}\n'.format(*splitted_row))
+            self.result.insert('end', "Рекомендация:\n" 
+                                + "Проверьте необходимость открытых TCP - портов.")
         else:
             self.result.insert('end', '{}\n'.format('Открытые TCP порты не обнаружены'))
 
@@ -104,6 +106,8 @@ class net_Tab(object):
             for row in list(filter(None, udp_status)):
                 splitted_row = list(filter(None, row.split(' ')))
                 self.result.insert('end', ' {0:<4} {1:<17} {2:<17} {3:<}\n'.format(*splitted_row))
+            self.result.insert('end', "Рекомендация:\n" 
+                                + "Проверьте необходимость открытых UDP - портов.")
         else:
             self.result.insert('end', '{}\n'.format('\n Открытые UDP порты не обнаружены\n'))
         return
@@ -116,6 +120,8 @@ class net_Tab(object):
             self.result.insert('end', ' Список открытых сокетов: \n')
             for row in sockets:
                 self.result.insert('end', ' {}\n'.format(row))
+            self.result.insert('end', "Рекомендация:\n" 
+                                + "Проверьте необходимость открытых сокетов в системе, и, если необходимо, закройте ненужные сокеты с помощью межсетевого экрана")
         else:
             self.result.insert('end', 'Открытые сокеты не обнаружены\n')
         return
@@ -128,6 +134,8 @@ class net_Tab(object):
             if ext_ports != '':
                 self.result.insert('end', ' Список внешних открытых портов: \n {}'.format(ext_ports))
                 #self.result.insert('end', '  {}\n'.format(ext_ports))
+                self.result.insert('end', "Рекомендация:\n" 
+                                + "Проверьте, нужны ли определенные открытые порты в системе. Закройте ненужные порты с помощью установки для них правил межсетевого экрана.\n\n")
             else:
                 self.result.insert('end', ' Открытые внешние порты не найдены\n')
         else:
@@ -149,6 +157,8 @@ class net_Tab(object):
                 # self.result.insert('end', '  {}\n'.format(ext_ports))
                 if not vulnerable:
                     self.result.insert('end', ' Опасные порты не найдены\n')
+                else: self.result.insert('end', 
+                "Проверьте, нужны ли определенные открытые порты в системе. Закройте ненужные порты с помощью установки для них правил межсетевого экрана.\n\n")
             else:
                 self.result.insert('end', ' Опасные порты не найдены\n')
         else:
@@ -158,6 +168,7 @@ class net_Tab(object):
     def check_terminals(self):
         self.result.insert('end', '\n{text}\n\n'.format(text='Проверка терминалов доступа'), 'title')
         self.result.update()
+        vulnerable = False
         [ext_ports, err] = command_seq('sudo last', self.password)
         if err == '':
             terminals = command_seq('sudo last | grep -s logged | awk \'{print $2,$1}\'', self.password)[0]
@@ -167,6 +178,7 @@ class net_Tab(object):
                 self.result.insert('end', ' Терминалы подключенные к системе:\n  tty User\n')
                 for port in terminals:
                     self.result.insert('end', ' {}\n'.format(port))
+                vulnerable = True
             else:
                 self.result.insert('end', ' Нет подключенных терминалов\n')
 
@@ -175,8 +187,13 @@ class net_Tab(object):
                 self.result.insert('end', '\n  Терминалы подключенные к системе от имени root:\n  tty\n')
                 for port in root_terms:
                     self.result.insert('end', ' {}\n'.format(port))
+                vulnerable = True
             else:
                 self.result.insert('end', ' Терминалы подключенные от имени root не обнаружены\n\n')
+            
+            if vulnerable: self.result.insert('end', 
+            "Следите за событиями терминалов, особенно если вход на терминал произошел от имени root.\n" 
+            + "Проанализируйте систему на предмет взлома с помощью спецпрограмм, если обнаруживаете, что запущенные процессы явно Вам не принадлежат.\n\n")
 
         else:
             self.result.insert('end',
