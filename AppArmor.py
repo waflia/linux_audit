@@ -4,14 +4,15 @@ import tkinter.ttk as ttk
 from commands import *
 from Log import write_log
 
+from API import Module
 
-class AppArmor_Tab(object):
+
+class AppArmor_Tab2(object):
     def __init__(self, master):
 
         self.password = ''
         self.aa_users = dict()
         self.aa_groups = dict()
-        self.aa_status = False
 
         self.base_profiles = ['/usr/bin/chromium-browser', '/usr/bin/opera', '/usr/bin/firefox',
                               '/usr/sbin/useradd', '/usr/sbin/userdel', '/usr/bin/passwd',
@@ -92,11 +93,10 @@ class AppArmor_Tab(object):
 
         status = command_seq('sudo apparmor_status', self.password)
         if 'apparmor module is loaded.' in status[0]:
-            self.aa_status = True
             self.result.insert('end', status[0])
         else:
             self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'))
-            self.result.insert("Рекомендация:\n"
+            self.result.insert('end', "Рекомендация:\n"
 		        + "Настройте AppArmor при помощи установки соответствующих пакетов и библиотек.\n\n") 
         return
 
@@ -139,6 +139,100 @@ class AppArmor_Tab(object):
         else:
             self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'))
             self.result.insert("Рекомендация:\n"
+		        + "Настройте AppArmor при помощи установки соответствующих пакетов и библиотек.\n"
+                + "Убедитесь, что необходимые профили загружены и включены.\n\n") 
+        return
+
+    def check_logs(self):
+        self.result.insert('end', '\n{}\n\n'.format('Проверка журнала аудита AppArmor'), 'title')
+        self.result.update()
+
+        status = command_seq('sudo apparmor_status', self.password)[0].split('\n')
+        if 'apparmor module is loaded.' == status[0]:
+            logs = command_seq('sudo cat /var/log/kern.log | grep -s apparmor', self.password)[0].replace('\n', '\n  ')
+            self.result.insert('end', logs)
+        else:
+            self.result.insert('end', '{}\n'.format(' Модуль AppArmor остановлен или отсутствует'))
+            self.result.insert('end', "Рекомендация:\n"
+		        + "Включите AppArmor если он отключен или настройте его при помощи установки соответствующих пакетов и библиотек.\n\n") 
+        return
+
+
+class AppArmor_Tab(Module):
+    def __init__(self, master):
+        super().__init__(master, False)
+
+        self.base_profiles = ['/usr/bin/chromium-browser', '/usr/bin/opera', '/usr/bin/firefox',
+                              '/usr/sbin/useradd', '/usr/sbin/userdel', '/usr/bin/passwd',
+                              '/sbin/syslogd', '/usr/lib/postix/flush', '/usr/lib/postfix/pipe',
+                              '/usr/lib/dovecot/imap-login', '/usr/lib/dovecot/pop3-login',
+                              '/usr/sbin/sendmail', '/sbin/dhclient', '/usr/sbin/dhcpd',
+                              '/sbin/dhcpcd', '/usr/bin/xfs', '/usr/sbin/in/ftpd', '/usr/sbin/smbd',
+                              '/usr/sbin/sshd', '/bin/ping', '/bin/netstat', '/usr/sbin/dnsmasq',
+                              '/usr/sbin/traceroute', '/usr/sbin/xinetd']
+
+        self.s = []
+        self.functions = {
+            "Статус AppArmor":self.check_status,
+            "Системные профили":self.check_sysprofiles,
+            "Сетевые профили":self.check_unconfined,
+            "Логи":self.check_logs
+        }
+
+        self.setFuncs(self.functions)
+    
+    def check_status(self):
+        self.result.insert('end', '\n{}\n\n'.format('Проверка статуса AppArmor'), 'title')
+        self.result.update()
+
+        status = command_seq('sudo apparmor_status', self.password)
+        if 'apparmor module is loaded.' in status[0]:
+            self.result.insert('end', status[0])
+        else:
+            self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'))
+            self.result.insert('end', "Рекомендация:\n"
+		        + "Настройте AppArmor при помощи установки соответствующих пакетов и библиотек.\n\n") 
+        return
+
+    def check_sysprofiles(self):
+        self.result.insert('end', '\n{}\n\n'.format('Проверка основных системных профилей AppArmor'), 'title')
+        self.result.update()
+
+        status = command_seq('sudo apparmor_status', self.password)[0].split('\n')
+        if 'apparmor module is loaded.' == status[0]:
+            vulnerable = False
+            enforce_profiles = command_seq('sudo cat /sys/kernel/security/apparmor/profiles | grep -s enforce', self.password)
+            complain_profiles = command_seq('sudo cat /sys/kernel/security/apparmor/profiles | grep -s complain', self.password)
+            for profile in self.base_profiles:
+                if profile not in enforce_profiles[0]:
+                    if profile not in complain_profiles[0]:
+                        vulnerable = True
+                        self.result.insert('end', ' Базовый профиль {} не обнаружен\n'.format(profile))
+                    else:
+                        vulnerable = True
+                        self.result.insert('end', ' Профиль {} находится в режиме обучения.'
+                                                  ' Рекомендуется перевести его в режим ограничения\n'.format(profile))
+
+            if not vulnerable:
+                self.result.insert('end', '{}\n'.format('Все основные профили загружены и настроены'))
+        else:
+            self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'), 'title')
+            self.result.insert('end', "Рекомендация:\n"
+		        + "Настройте AppArmor при помощи установки соответствующих пакетов и библиотек и проверьте наличие необходимых модулей\n\n") 
+
+        return
+
+    def check_unconfined(self):
+        self.result.insert('end', '\n{}\n\n'.format('Проверка сетевых процессов, не имеющих загруженных профилей AppArmor'), 'title')
+        self.result.update()
+
+        status = command_seq('sudo apparmor_status', self.password)[0].split('\n')
+        if 'apparmor module is loaded.' == status[0]:
+            unconfined_profiles = command_seq('sudo aa-unconfined', self.password)[0]
+            self.result.insert('end', unconfined_profiles)
+        else:
+            self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'))
+            self.result.insert('end', "Рекомендация:\n"
 		        + "Настройте AppArmor при помощи установки соответствующих пакетов и библиотек.\n"
                 + "Убедитесь, что необходимые профили загружены и включены.\n\n") 
         return

@@ -37,7 +37,7 @@ nb.add(aa_Frame, text='Apparmor')
 nb.add(net_Frame, text='Network')
 nb.add(logs_Frame, text='Logs')
 
-base = Base_Tab(base_Frame, path='/home')
+base = Base_Tab(base_Frame, path="/home")
 acl = ACL_Tab(acl_Frame, path='/home')
 app_armor = AppArmor_Tab(aa_Frame)
 net = net_Tab(net_Frame)
@@ -81,19 +81,16 @@ def correct(pas):
     else:
         return False
 
-
 def root_quit():
     root.destroy()
 
-
 def change_tab(event):
     try:
-        with open('test/last.txt', 'r') as file:
+        with open('diplom/test/last.txt', 'r') as file:
             text = file.read()
             log.set_text(text)
     except FileNotFoundError:
         mb.showinfo("", "Файл test/last.txt не найден")
-
 
 if not corr:
 # Конфигурирование окна ввода пароля

@@ -42,12 +42,11 @@ class log_Tab(object):
         except:
             mb.showinfo('Внимание', 'Файл не сохранен')
 
-
 def write_log(text):
     try:
-        with open('test/logs.txt', 'a') as file:
+        with open('diplom/test/logs.txt', 'a') as file:
             file.write(text)
-        with open('test/last.txt', 'a') as last_log:
+        with open('diplom/test/last.txt', 'a') as last_log:
             last_log.write(text)
     except FileNotFoundError:
-        mb.showinfo("", "Файл test/last.txt не найден")
+        mb.showinfo("", "Файл diplom/test/last.txt не найден")

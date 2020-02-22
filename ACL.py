@@ -3,98 +3,19 @@ import datetime
 import tkinter as tk
 import tkinter.ttk as ttk
 from commands import *
-from tree import Tree
-from Log import write_log
 
+from API import Module
 
-class ACL_Tab(object):
+class ACL_Tab(Module):
     def __init__(self, master, path):
+        super().__init__(master, True)
 
-        self.current_item = ''
-        self.nodes = dict()
-        self.password = ''
-        self.opt = dict()
-        self.acl_users = dict()
-        self.acl_groups = dict()
-        self.changes = ''
-        self.files = dict()
-        self.s = []
-
-        self.vars = [tk.IntVar(), tk.IntVar(), tk.IntVar(), tk.IntVar()]
-        for p in self.vars:
-            p.set(1)
-
-        frame = ttk.LabelFrame(master, text='Результат аудита прав ACL')
-        conf_frame = ttk.Frame(master, width=270)
-        tree_frame = ttk.Frame(conf_frame, width=270)
-
-        self.result = tk.Text(frame, wrap='word', height=36)
-        
-        self.result.tag_configure('title', font=('Verdana', 12), justify='center')
-        self.result.tag_configure('recomendations', font=('Verdana', 10), foreground='yellow')
-
-        self.chb_search = ttk.Checkbutton(conf_frame, text='Поиск объектов с правами ACL', variable=self.vars[0],
-                                          onvalue=1, offvalue=0)
-        self.chb_fullpers = ttk.Checkbutton(conf_frame, text='Проверка полного доступа по маске', variable=self.vars[1],
-                                            onvalue=1, offvalue=0)
-        self.chb_ownpers = ttk.Checkbutton(conf_frame, text='Проверка полного доступа субъекта\n и группы-субъекта',
-                                           variable=self.vars[2], onvalue=1, offvalue=0)
-        self.chb_err = ttk.Checkbutton(conf_frame, text='Ошибки при настройке прав ACL', variable=self.vars[3],
-                                       onvalue=1, offvalue=0)
-
-        self.btn_run = ttk.Button(conf_frame, text='Запуск аудита', command=self.run_audit)
-
-        self.tree = Tree(tree_frame, path=path)
-
-        self.ytext = ttk.Scrollbar(frame, orient='vertical', command=self.result.yview)
-        self.result.configure(yscroll=self.ytext.set)
-
-        ttk.Style().configure('Treeview', rowheight=30)
-        ttk.Style().configure('Vertical.TScrollbar', troughcolor='#f6f4f2', relief=tk.GROOVE)
-        ttk.Style().configure('Horizontal.TScrollbar', troughcolor='#f6f4f2')
-
-        conf_frame.pack(side=tk.LEFT, anchor='n', fill=tk.Y)
-
-        tree_frame.pack(side=tk.TOP, fill=tk.Y, anchor='sw', pady=5, padx=5, expand=1)
-        sep = ttk.Separator(master, orient='vertical').pack(side=tk.LEFT, anchor='n', fill=tk.Y)
-        frame.pack(side=tk.LEFT, anchor='n', fill=tk.BOTH, expand=1)
-
-        self.chb_search.pack(side=tk.TOP, anchor='nw', padx=5, pady=1)
-        self.chb_fullpers.pack(side=tk.TOP, anchor='nw', padx=5, pady=0)
-        self.chb_ownpers.pack(side=tk.TOP, anchor='nw', padx=5, pady=0)
-        self.chb_err.pack(side=tk.TOP, anchor='nw', padx=5, pady=0)
-
-        self.btn_run.pack(side=tk.BOTTOM, pady=5, padx=5, anchor='s', fill=tk.X)
-
-        self.ytext.pack(side=tk.RIGHT, anchor='n', fill=tk.Y)
-        self.result.pack(side=tk.TOP, fill=tk.BOTH, anchor='nw')
-
-        self.abspath = os.path.abspath(path)
-
-    def set_pass(self, pas):
-        self.password = pas
-        self.tree.set_pass(pas)
-
-    def run_audit(self):
-        self.result.delete('1.0', 'end')
-        beginning = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S\n\n')
-        self.result.insert('end', ' Начало аудита системы ACL:    ' + str(beginning))
-        self.result.update()
-        self.files = self.tree.file_permissions()
-
-        funcs = [self.check_acl, self.check_fullpermissions, self.check_owner_permissions, self.check_err]
-
-        for var in range(0, len(self.vars)):
-            if self.vars[var].get() == 1:
-                funcs[var]()
-                self.result.see('end')
-
-        ending = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S\n')
-        self.result.insert('end', '\n Окончание аудита системы ACL: ' + str(ending))
-        self.result.see('end')
-
-        write_log(self.result.get('1.0', 'end'))
-
+        self.functions = {"Файлы с ACL": self.check_acl,
+            "Полные права": self.check_fullpermissions,
+            "Права владельца": self.check_owner_permissions,
+            "Проверка ошибок": self.check_err}      
+        self.setFuncs(self.functions)
+    
     def check_acl(self):
         self.result.insert('end', '\n{text}\n\n'.format(text='Поиск объектов с правами ACL\n Угроза:потенциальная уязвимость'), 'title')
         self.result.update()

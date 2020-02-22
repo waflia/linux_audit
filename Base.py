@@ -1,17 +1,14 @@
-import os
-import datetime
 import tkinter as tk
 import tkinter.ttk as ttk
 from commands import command_seq
-from tree import Tree
-from Log import write_log
+
+from API import Module
 
 
-class Base_Tab(object):
+class Base_Tab(Module):
     def __init__(self, master, path):
+        super().__init__(master, True)
 
-        self.password = ''
-        self.files = dict()
         self.sys_dirs = {'/etc/passwd':         'rw-r--r--',
                          '/etc/shadow':         'rw-------',
                          '/etc/hosts.allow':    'rw-------',
@@ -23,102 +20,19 @@ class Base_Tab(object):
                          '/etc/security':       'rw-------',
                          '/etc/init.d':         'rwxr-x---',
                          '/var/log':            'rwxr-x--x'}
-
-        self.vars = [tk.IntVar(), tk.IntVar(), tk.IntVar(), tk.IntVar(), tk.IntVar(), tk.IntVar(),
-                     tk.IntVar(), tk.IntVar(), tk.IntVar(), tk.IntVar()]
-        for p in self.vars:
-            p.set(1)
-
-        self.width = 72
-
-        self.frame = ttk.LabelFrame(master, text='Результат аудита базовой СКД')
-        conf_frame = ttk.Frame(master, width=260)
-        tree_frame = ttk.Frame(conf_frame, width=260)
-
-        self.result = tk.Text(self.frame, wrap='word', height=36)
-        self.result.tag_configure('title', font=('Verdana', 12), justify='center')
-
-        self.chb_mask = ttk.Checkbutton(conf_frame, text='Проверка текущей маски\n  пользователя',
-                                        variable=self.vars[0], onvalue=1, offvalue=0)
-        self.chb_fullpers = ttk.Checkbutton(conf_frame, text='Поиск файлов с полными правами\n для категории "Все остальные"',
-                                            variable=self.vars[1], onvalue=1, offvalue=0)
-        self.chb_ownpers = ttk.Checkbutton(conf_frame, text='Поиск файлов с неправильными\n правами владельца',
-                                           variable=self.vars[2], onvalue=1, offvalue=0)
-        self.chb_sys = ttk.Checkbutton(conf_frame, text='Анализ режима доступа системных\n каталогов',
-                                       variable=self.vars[3], onvalue=1, offvalue=0)
-        self.chb_nonepers = ttk.Checkbutton(conf_frame, text='Объекты без доступа',
-                                            variable=self.vars[4], onvalue=1, offvalue=0)
-        self.chb_unvisible = ttk.Checkbutton(conf_frame, text='Поиск закрытых каталогов',
-                                             variable=self.vars[5], onvalue=1, offvalue=0)
-        self.chb_noowner = ttk.Checkbutton(conf_frame, text='Файлы с владельцем "nobody" и\n группой "nogroup"',
-                                           variable=self.vars[6], onvalue=1, offvalue=0)
-        self.chb_suid = ttk.Checkbutton(conf_frame, text='Объекты с битом SUID',
-                                        variable=self.vars[7], onvalue=1, offvalue=0)
-        self.chb_sgid = ttk.Checkbutton(conf_frame, text='Объекты с битом SGID',
-                                        variable=self.vars[8], onvalue=1, offvalue=0)
-        self.chb_sticky = ttk.Checkbutton(conf_frame, text='Объекты со Sticky-битом',
-                                          variable=self.vars[9], onvalue=1, offvalue=0)
-
-        self.btn_run = ttk.Button(conf_frame, text='Запуск аудита', command=self.run_audit)
-
-        self.tree = Tree(tree_frame, path=path)
-
-        self.ytext = ttk.Scrollbar(self.frame, orient='vertical', command=self.result.yview)
-        self.result.configure(yscroll=self.ytext.set)
-
-        ttk.Style().configure('Treeview', rowheight=15)
-        ttk.Style().configure('Vertical.TScrollbar', troughcolor='#f6f4f2', relief=tk.GROOVE)
-        ttk.Style().configure('Horizontal.TScrollbar', troughcolor='#f6f4f2')
-
-        conf_frame.pack(side=tk.LEFT, anchor='n')
-
-        sep = ttk.Separator(master, orient='vertical').pack(side=tk.LEFT, anchor='n', fill=tk.Y)
-        self.frame.pack(side=tk.LEFT, anchor='n', fill=tk.BOTH, expand=1)
-
-        self.btn_run.pack(side=tk.BOTTOM, pady=0, padx=5, anchor='s', fill=tk.X)
-        self.chb_sticky.pack(side=tk.BOTTOM, anchor='nw', padx=5, pady=0)
-        self.chb_sgid.pack(side=tk.BOTTOM, anchor='nw', padx=5, pady=0)
-        self.chb_suid.pack(side=tk.BOTTOM, anchor='nw', padx=5, pady=0)
-        self.chb_noowner.pack(side=tk.BOTTOM, anchor='nw', padx=5, pady=0)
-        self.chb_unvisible.pack(side=tk.BOTTOM, anchor='nw', padx=5, pady=0)
-        self.chb_nonepers.pack(side=tk.BOTTOM, anchor='nw', padx=5, pady=0)
-        self.chb_sys.pack(side=tk.BOTTOM, anchor='nw', padx=5, pady=0)
-        self.chb_ownpers.pack(side=tk.BOTTOM, anchor='nw', padx=5, pady=0)
-        self.chb_fullpers.pack(side=tk.BOTTOM, anchor='nw', padx=5, pady=0)
-        self.chb_mask.pack(side=tk.BOTTOM, anchor='nw', padx=5, pady=1)
-
-        tree_frame.pack(side=tk.TOP, fill=tk.Y, anchor='w', pady=5, padx=5)
-        self.ytext.pack(side=tk.RIGHT, anchor='n', fill=tk.Y)
-        self.result.pack(side=tk.TOP, fill=tk.BOTH, anchor='nw')
-
-        self.abspath = os.path.abspath(path)
-
-    def set_pass(self, pas):
-        self.password = pas
-        self.tree.set_pass(pas)
-
-    def run_audit(self):
-        self.result.delete('1.0', 'end')
-        self.width = 72
-        beginning = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S\n\n')
-        self.result.insert('end', ' Начало аудита базовой СКД:    ' + str(beginning))
-        self.result.update()
-        self.files = self.tree.file_permissions()
-
-        funcs = [self.check_mask, self.check_fullpermissions, self.check_owner_permissions, self.check_system,
-                 self.check_none_permissions, self.check_unvisible, self.check_none_og, self.check_suid,
-                 self.check_sgid, self.check_sticky]
-
-        for var in range(0, len(self.vars)):
-            if self.vars[var].get() == 1:
-                funcs[var]()
-                self.result.see('end')
-
-        ending = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S\n')
-        self.result.insert('end', '\n Окончание аудита базовой СКД: ' + str(ending))
-        self.result.see('end')
-
-        write_log(self.result.get('1.0', 'end'))
+        
+        self.functions = {"Маска":self.check_mask,
+                    "Полные права": self.check_fullpermissions,
+                    "Права владельца": self.check_owner_permissions,
+                    "Системные файлы": self.check_system,
+                    "Файлы без прав":self.check_none_permissions,
+                    "Невидимые файлы": self.check_unvisible,
+                    "Nobody,Nogroup": self.check_none_og,
+                    "Suid": self.check_suid,
+                    "Sgid": self.check_sgid,
+                    "Sticky": self.check_sticky}
+        
+        self.setFuncs(self.functions)
 
     def check_mask(self):
         self.result.insert('end', '{text}\n\n'.format(text='Проверка текущей маски'), 'title')
