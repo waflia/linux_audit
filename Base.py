@@ -33,6 +33,7 @@ class Base_Tab(Module):
                     "Sticky": self.check_sticky}
         
         self.setFuncs(self.functions)
+        self.setParams(header = "базовой СКД")
 
     def check_mask(self):
         self.result.insert('end', '{text}\n\n'.format(text='Проверка текущей маски'), 'title')

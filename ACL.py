@@ -15,6 +15,7 @@ class ACL_Tab(Module):
             "Права владельца": self.check_owner_permissions,
             "Проверка ошибок": self.check_err}      
         self.setFuncs(self.functions)
+        self.setParams(header = "списков ACL")
     
     def check_acl(self):
         self.result.insert('end', '\n{text}\n\n'.format(text='Поиск объектов с правами ACL\n Угроза:потенциальная уязвимость'), 'title')
@@ -132,3 +133,5 @@ class ACL_Tab(Module):
                                + " не нарушающую безопасности системы, командой:\n" 
                                 + "setfacl -m u:username:rwx obj_name.\n\n", 'recomendations')
         return
+
+assert issubclass(ACL_Tab, Module)

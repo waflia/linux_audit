@@ -5,23 +5,13 @@ import tkinter.ttk as ttk
 
 from tree import Tree
 from Log import write_log
-
-class APIInfo():
-
-    def __init__(self):
-        self.modules = []
-    
-    def getModules(self):
-        return self.modules
-    
-    def addModule(self, module):
-        self.modules.append(module)
     
 class Module():
     def __init__(self, master, enableTree):
         #info.addModule(self)
         self.password = ''
         self.path = '/'
+        self.header = ""
         self.funcs = []
         self.vars = []
         self.files = dict()
@@ -29,7 +19,7 @@ class Module():
 
         self.width = 72
 
-        self.frame = ttk.LabelFrame(master, text='')
+        self.frame = ttk.LabelFrame(master, text="Результат аудита")
         self.conf_frame = ttk.Frame(master, width=260)
 
         if(enableTree):
@@ -44,7 +34,7 @@ class Module():
         self.ytext = ttk.Scrollbar(self.frame, orient='vertical', command=self.result.yview)
         self.result.configure(yscroll=self.ytext.set)
 
-        ttk.Style().configure('Treeview', rowheight=15)
+        ttk.Style().configure('Treeview', rowheight=30)
         ttk.Style().configure('Vertical.TScrollbar', troughcolor='#f6f4f2', relief=tk.GROOVE)
         ttk.Style().configure('Horizontal.TScrollbar', troughcolor='#f6f4f2')
 
@@ -69,7 +59,7 @@ class Module():
         self.result.delete('1.0', 'end')
         self.width = 72
         beginning = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S\n\n')
-        self.result.insert('end', ' Начало аудита базовой СКД:    ' + str(beginning))
+        self.result.insert('end', ' Начало аудита {}:    '.format(self.header) + str(beginning))
         self.result.update()
         if(self.treeEnabled):
             self.files = self.tree.file_permissions()
@@ -80,7 +70,7 @@ class Module():
                 self.result.see('end')
 
         ending = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S\n')
-        self.result.insert('end', '\n Окончание аудита базовой СКД: ' + str(ending))
+        self.result.insert('end', '\n Окончание аудита {}: '.format(self.header) + str(ending))
         self.result.see('end')
 
         write_log(self.result.get('1.0', 'end'))
@@ -101,6 +91,7 @@ class Module():
         if(self.treeEnabled):
             self.tree_frame.pack(side=tk.BOTTOM, fill=tk.Y, anchor='w', pady=5, padx=5, expand=1)
         
-        
+    def setParams(self, header):
+        self.header = header
 
     

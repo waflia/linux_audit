@@ -222,6 +222,7 @@ class net_Tab(Module):
         }
 
         self.setFuncs(self.functions)
+        self.setParams(header = "сетевых интерфейсов")
        
     def check_ports(self):
         self.result.insert('end', '\n{text}\n\n'.format(text='Проверка открытых TCP и UDP портов'), 'title')

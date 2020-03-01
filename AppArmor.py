@@ -180,6 +180,7 @@ class AppArmor_Tab(Module):
         }
 
         self.setFuncs(self.functions)
+        self.setParams(header = "модуля AppArmor")
     
     def check_status(self):
         self.result.insert('end', '\n{}\n\n'.format('Проверка статуса AppArmor'), 'title')
