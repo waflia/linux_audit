@@ -1,9 +1,6 @@
 import datetime
-import tkinter as tk
-import tkinter.ttk as ttk
 from commands import *
 from Log import write_log
-
 from API import Module
 
 

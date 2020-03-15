@@ -1,5 +1,3 @@
-import tkinter as tk
-import tkinter.ttk as ttk
 from commands import command_seq
 
 from API import Module

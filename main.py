@@ -10,6 +10,7 @@ from Base import Base_Tab
 from AppArmor import AppArmor_Tab
 from Net import net_Tab
 from Log import log_Tab
+from SELinux import SELinux_Tab
 #from commands import *
 from subprocess import Popen, PIPE, run
 
@@ -28,18 +29,21 @@ nb = ttk.Notebook(root)
 base_Frame = ttk.Frame(nb)
 acl_Frame = ttk.Frame(nb)
 aa_Frame = ttk.Frame(nb)
+sel_Frame = ttk.Frame(nb)
 net_Frame = ttk.Frame(nb)
 logs_Frame = ttk.Frame(nb)
 
 nb.add(base_Frame, text='Base')
 nb.add(acl_Frame, text='ACL')
 nb.add(aa_Frame, text='Apparmor')
+nb.add(sel_Frame, text='SELinux')
 nb.add(net_Frame, text='Network')
 nb.add(logs_Frame, text='Logs')
 
 base = Base_Tab(base_Frame, path="/home")
 acl = ACL_Tab(acl_Frame, path='/home')
 app_armor = AppArmor_Tab(aa_Frame)
+selinux = SELinux_Tab(sel_Frame)
 net = net_Tab(net_Frame)
 log = log_Tab(logs_Frame)
 
@@ -64,10 +68,10 @@ def button_click(event):
         base.set_pass(password)
         acl.set_pass(password)
         app_armor.set_pass(password)
+        selinux.set_pass(password)
         net.set_pass(password)
     else:
         pass_Label['text'] = 'Неверный пароль!'
-
 
 def correct(pas):
     """Функция проверки корректности пароля"""
@@ -126,6 +130,7 @@ else:
     base.set_pass(password)
     acl.set_pass(password)
     app_armor.set_pass(password)
+    selinux.set_pass(password)
     net.set_pass(password)
 #####################################################################
 dw = (root.winfo_screenwidth() - wd) // 2
