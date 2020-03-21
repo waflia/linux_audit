@@ -94,11 +94,11 @@ def root_quit():
 
 def change_tab(event):
     try:
-        with open('diplom/test/last.txt', 'r') as file:
+        with open('./test/last.txt', 'r') as file:
             text = file.read()
             log.set_text(text)
     except FileNotFoundError:
-        mb.showinfo("", "Файл test/last.txt не найден")
+        mb.showinfo("", "Файл /last.txt не найден")
 
 if not corr:
     # Конфигурирование окна ввода пароля
