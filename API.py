@@ -22,9 +22,9 @@ class Module():
         self.frame = ttk.LabelFrame(master, text="Результат аудита")
         self.conf_frame = ttk.Frame(master, width=260)
 
-        if(enableTree):
-            self.tree_frame = ttk.Frame(self.conf_frame, width=260)
-            self.tree = Tree(self.tree_frame, path=self.path)
+        #if(enableTree):
+        self.tree_frame = ttk.Frame(self.conf_frame, width=260)
+        self.tree = Tree(self.tree_frame, path=self.path)
 
         self.result = tk.Text(self.frame, wrap='word', height=36)
         self.result.tag_configure('title', font=('Verdana', 12), justify='center')
@@ -52,8 +52,8 @@ class Module():
     
     def set_pass(self, pas):
         self.password = pas
-        if(self.treeEnabled):
-            self.tree.set_pass(pas)
+        #if(self.treeEnabled):
+        self.tree.set_pass(pas)
 
     def run_audit(self):
         self.result.delete('1.0', 'end')
@@ -61,8 +61,8 @@ class Module():
         beginning = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S\n\n')
         self.result.insert('end', ' Начало аудита {}:    '.format(self.header) + str(beginning))
         self.result.update()
-        if(self.treeEnabled):
-            self.files = self.tree.file_permissions()
+        #if(self.treeEnabled):
+        self.files = self.tree.file_permissions()
 
         for var in range(0, len(self.vars)):
             if self.vars[var].get() == 1:
