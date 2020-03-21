@@ -33,12 +33,16 @@ sel_Frame = ttk.Frame(nb)
 net_Frame = ttk.Frame(nb)
 logs_Frame = ttk.Frame(nb)
 
+addNewModule_Frame = ttk.Frame(nb)
+
 nb.add(base_Frame, text='Base')
 nb.add(acl_Frame, text='ACL')
 nb.add(aa_Frame, text='Apparmor')
 nb.add(sel_Frame, text='SELinux')
 nb.add(net_Frame, text='Network')
 nb.add(logs_Frame, text='Logs')
+
+nb.add(addNewModule_Frame, text='+')
 
 base = Base_Tab(base_Frame, path="/home")
 acl = ACL_Tab(acl_Frame, path='/home')
@@ -97,17 +101,17 @@ def change_tab(event):
         mb.showinfo("", "Файл test/last.txt не найден")
 
 if not corr:
-# Конфигурирование окна ввода пароля
+    # Конфигурирование окна ввода пароля
     width = root.winfo_screenwidth()//5 + 96
     height = root.winfo_screenheight()//5
     dw = (root.winfo_screenwidth()-width)//2
     dh = (root.winfo_screenheight()-height)//2
     passwd.geometry('{}x{}+{}+{}'.format(width, height, dw, dh))
-# passwd.iconbitmap(os.path.abspath("lock.ico"))
+    # passwd.iconbitmap(os.path.abspath("lock.ico"))
     passwd.resizable(False, False)
     passwd.title('Введите пароль суперпользователя')
 
-# Настройка виджетов в окне ввода пароля
+    # Настройка виджетов в окне ввода пароля
     pass_Label = ttk.Label(tlevel_frame)
     pass_Entry = ttk.Entry(tlevel_frame, font=16, show='⚫')
     pass_Btn = ttk.Button(tlevel_frame, text='OK', width=15)
@@ -132,7 +136,7 @@ else:
     app_armor.set_pass(password)
     selinux.set_pass(password)
     net.set_pass(password)
-#####################################################################
+    #####################################################################
 dw = (root.winfo_screenwidth() - wd) // 2
 dh = (root.winfo_screenheight() - ht) // 2
 root.wm_geometry('{}x{}+{}+{}'.format(wd, ht, dw, dh))
