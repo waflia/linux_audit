@@ -61,8 +61,9 @@ class Module():
         beginning = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S\n\n')
         self.result.insert('end', ' Начало аудита {}:    '.format(self.header) + str(beginning))
         self.result.update()
-        #if(self.treeEnabled):
-        self.files = self.tree.file_permissions()
+        
+        if(self.treeEnabled):
+            self.files = self.tree.file_permissions()
 
         for var in range(0, len(self.vars)):
             if self.vars[var].get() == 1:

@@ -11,15 +11,14 @@ from AppArmor import AppArmor_Tab
 from Net import net_Tab
 from Log import log_Tab
 from SELinux import SELinux_Tab
-#from commands import *
+from pamd import PAM_Tab
 from subprocess import Popen, PIPE, run
-
 
 root = ThemedTk(theme='radiance')
 passwd = Toplevel()
 tlevel_frame = ttk.Frame(passwd)
-wd = 900
-ht = 650
+wd = 800
+ht = 600
 root.withdraw()
 passwd.focus_set()
 password = ''
@@ -30,6 +29,7 @@ base_Frame = ttk.Frame(nb)
 acl_Frame = ttk.Frame(nb)
 aa_Frame = ttk.Frame(nb)
 sel_Frame = ttk.Frame(nb)
+pam_Frame = ttk.Frame(nb)
 net_Frame = ttk.Frame(nb)
 logs_Frame = ttk.Frame(nb)
 
@@ -40,6 +40,7 @@ nb.add(acl_Frame, text='ACL')
 nb.add(aa_Frame, text='Apparmor')
 nb.add(sel_Frame, text='SELinux')
 nb.add(net_Frame, text='Network')
+nb.add(pam_Frame, text='PAM')
 nb.add(logs_Frame, text='Logs')
 
 nb.add(addNewModule_Frame, text='+')
@@ -48,6 +49,7 @@ base = Base_Tab(base_Frame, path="/home")
 acl = ACL_Tab(acl_Frame, path='/home')
 app_armor = AppArmor_Tab(aa_Frame)
 selinux = SELinux_Tab(sel_Frame)
+pam = PAM_Tab(pam_Frame)
 net = net_Tab(net_Frame)
 log = log_Tab(logs_Frame)
 
@@ -135,6 +137,7 @@ else:
     acl.set_pass(password)
     app_armor.set_pass(password)
     selinux.set_pass(password)
+    pam.set_pass(password)
     net.set_pass(password)
     #####################################################################
 dw = (root.winfo_screenwidth() - wd) // 2

@@ -1,6 +1,5 @@
 from API import Module
 from commands import *
-from tree import 
 
 class PAM_Tab(Module):
 
@@ -16,8 +15,8 @@ class PAM_Tab(Module):
         self.functions = {
             "Анализ контроля PAM": self.checkPamdProfiles,
             "Поиск профилей с уязвимыми параметрами": self.checkVulnerableParameters,
-            "Безопасность файлов модуля PAM":self.checkPamFiles,
-        }
+            "Безопасность файлов модуля PAM":self.checkPamFiles
+            }
         self.setFuncs(self.functions)
         self.setParams(header = "модуля PAM")
         self.tree.selected_dirs = ['/lib/security']
@@ -26,24 +25,26 @@ class PAM_Tab(Module):
         self.result.insert('end', '\n{}\n\n'.format('Проверка важных профилей PAM'), 'title')
         self.result.update()
         self.vulnerable = False
-        result = command_seq('ls  -1 /etc/pamd')[0].split('\n')
+        result = command_seq('sudo ls  -1 /etc/pam.d', self.password)[0].split('\n')
         self.result.insert('end', '{}\n'.format('Профили PAM, присутствующие в системе'))
         
         for prof in result:
-            self.result.insert('end', 'Профиль:{}\n'.format(prof))
+            if prof != '':
+                self.result.insert('end', 'Профиль:{}\n'.format(prof))
 
+        self.result.insert('end', '{}\n'.format('Важные профили PAM, отсутствующие в системе'))
         for prof in self.profiles:
             if prof in result:
                 continue
             else:
                 self.result.insert('end', 'Профиль:{} отсутствует в системе\n'.format(prof))
                 self.vulnerable = True
-            if self.vulnerable:
-                self.result.insert('end', '{}\n'.format('Внимание! Некоторые важные модули отсутсвуют в системе.\n'))
-                self.result.insert('end', "Рекомендация:\n"
+        if self.vulnerable:
+            self.result.insert('end', '\n{}\n'.format('Внимание! Некоторые важные модули отсутсвуют в системе.\n'))
+            self.result.insert('end', "Рекомендация:\n"
 		        + "Проверьте необходимость модулей выше и при необходимости добавьте добавьте соответствующие профили в папку /etc/pamd\n\n") 
-            else:
-                self.result.insert('end', '{}\n'.format("Профили для всех важных системных модулей присутстыую!\n"))
+        else:
+            self.result.insert('end', '{}\n'.format("Профили для всех важных системных модулей присутстыую!\n"))
         return
 
     def checkVulnerableParameters(self):
@@ -51,16 +52,16 @@ class PAM_Tab(Module):
         self.result.update()
         self.vulnerable = False
 
-        result = command_seq('ls  -1 /etc/pamd')[0].split('\n')
+        result = command_seq('ls  -1 /etc/pam.d')[0].split('\n')
         
         for prof in result:
-            profile = command_seq('cat < %' % prof)[0]
+            profile = command_seq('cat < /etc/pam.d/{}'.format(prof))[0]
             if 'sufficient' in profile:
                 self.vulnerable = True
-                self.result("end", 'Профиль {} имеет опцию sufficient\n',format(prof))
+                self.result.insert("end", 'Профиль {} имеет опцию sufficient\n'.format(prof))
             if 'optional' in profile:
                 self.vulnerable = True
-                self.result("end", 'Профиль {} имеет опцию optional\n',format(prof))
+                self.result.insert("end", 'Профиль {} имеет опцию optional\n'.format(prof))
             
         if self.vulnerable:
             self.result.insert('end', '{}\n'.format('Эти профили PAM содкржат потенцальную уязвимость .\n'))
@@ -75,7 +76,8 @@ class PAM_Tab(Module):
         self.result.update()
         self.vulnerable = False
 
-        result = self.tree.file_permissions()
+        self.tree.get_file_permissions('/lib/security')
+        result = self.tree.files
         #result = command_seq('ls  -l /lib/security')[0].split('\n')
         for filepers in result:
             if filepers[3] != 'root' and filepers[2] != 'root':
