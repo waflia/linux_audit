@@ -5,7 +5,7 @@ from commands import *
 from API import Module
 
 class ACL_Tab(Module):
-    def __init__(self, master, path):
+    def __init__(self, master, path='/'):
         super().__init__(master, True)
 
         self.functions = {"Файлы с ACL": self.check_acl,

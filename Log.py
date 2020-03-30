@@ -5,7 +5,7 @@ from tkinter import filedialog as fd
 from tkinter import messagebox as mb
 
 
-class log_Tab(object):
+class Log_Tab(object):
 
     def __init__(self, master):
 

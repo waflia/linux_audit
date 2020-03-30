@@ -4,7 +4,7 @@ from API import Module
 
 
 class Base_Tab(Module):
-    def __init__(self, master, path):
+    def __init__(self, master, path='/'):
         super().__init__(master, True)
 
         self.sys_dirs = {'/etc/passwd':         'rw-r--r--',
