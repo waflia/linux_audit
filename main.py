@@ -25,6 +25,7 @@ ht = 600
 root.withdraw()
 passwd.focus_set()
 password = ''
+loader = None
 corr = False
 
 # nb = ttk.Notebook(root)
@@ -85,6 +86,11 @@ def correct(pas):
         return False
 
 def root_quit():
+    root.destroy()
+
+def on_closing():
+    if loader != None:
+        loader.write_modules()
     root.destroy()
 
 # def change_tab(event):
@@ -176,6 +182,6 @@ root.title('Управление безопасностью Linux')
 
 # nb.pack(side=LEFT, fill=BOTH, expand=1)
 root.resizable(width=TRUE, height=FALSE)
-
+root.protocol("WM_DELETE_WINDOW", on_closing)
 root.mainloop()
 
