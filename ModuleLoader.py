@@ -25,6 +25,7 @@ class Loader():
         self.nb.enable_traversal()
         self.nb.bind('<<NotebookTabChanged>>', self.change_tab)
         self.nb.pack(side=LEFT, fill=BOTH, expand=1)
+        self.nb.select(self.nb.index(0))
 
     def read_modules(self):
         try:
@@ -58,13 +59,15 @@ class Loader():
                 break
         if tab != None:
             tabFrame = ttk.Frame(self.nb)
-            self.nb.add(tabFrame, text = tab_name)
+            self.nb.insert(self.nb.index('end') - 2, tabFrame, text = tab_name)
+            self.nb.select(self.nb.index('end') - 3)
             newTab = tab(tabFrame)
             newTab.set_pass(self.password)
 
-    def delModule(self, Tab_Name):
+    def delModule(self, Tab_Name, index = None):
         self.modules.pop(Tab_Name)
         self.write_modules()
+        self.nb.forget('current')
     
     def importModules(self):
         for tab_name, module_name in self.modules.items():
@@ -96,16 +99,5 @@ class Loader():
             for filename in filenames:
                 module_name = filename.split('/')[-1].split('.')[0]
                 self.addModule(module_name, module_name)
-            # module = importlib.import_module(module_name)
-            # tab = None
-            # for x in dir(module):
-            #     obj = getattr(module, x)
-            #     if inspect.isclass(obj) and "_Tab" in obj.__name__:
-            #         tab = obj
-            #         break
-            # new_frame = ttk.Frame(nb)
-            # nb.insert(nb.index('end') - 1, new_frame, text = module_name)
-            # new_tab = tab(new_frame)
-            # new_tab.set_pass(password)
 
         

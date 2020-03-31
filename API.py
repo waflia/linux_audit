@@ -8,7 +8,6 @@ from Log import write_log
     
 class Module():
     def __init__(self, master, enableTree):
-        #info.addModule(self)
         self.password = ''
         self.path = '/'
         self.header = ""

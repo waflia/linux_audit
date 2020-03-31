@@ -14,8 +14,8 @@ class PAM_Tab(Module):
                          
         self.functions = {
             "Анализ контроля PAM": self.checkPamdProfiles,
-            "Поиск профилей с уязвимыми параметрами": self.checkVulnerableParameters,
-            "Безопасность файлов модуля PAM":self.checkPamFiles
+            "Поиск профилей\n с уязвимыми параметрами": self.checkVulnerableParameters,
+            "Безопасность файлов\n модуля PAM":self.checkPamFiles
             }
         self.setFuncs(self.functions)
         self.setParams(header = "модуля PAM")

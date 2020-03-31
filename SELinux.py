@@ -6,14 +6,14 @@ class SELinux_Tab(Module):
     def __init__(self, master):
         super().__init__(master, False)
         self.functions = {
-            "Статус SELinux в системе": self.checkSELinuxStatus,
+            "Статус SELinux \nв системе": self.checkSELinuxStatus,
             "Режим работы SELinux": self.checkSELinuxMode,
-            "Контексты SELinux для каталогов":self.checkSELinuxFolders,
-            "Контексты SELinux для процессов": self.checkSELinuxProcesses,
+            "Контексты SELinux \nдля каталогов":self.checkSELinuxFolders,
+            "Контексты SELinux \nдля процессов": self.checkSELinuxProcesses,
             "Контексты пользователей": self.checkSELinuxUsers,
-            "Активность политик SELinux": self.checkSELinuxPolitics,
-            "Защита портов с помощью SELinux": self.checkSELinuxPorts,
-            "Анализ журнала событий SELinux" : self.checkSELinuxLogs
+            "Активность политик \nSELinux": self.checkSELinuxPolitics,
+            "Защита портов\n с помощью SELinux": self.checkSELinuxPorts,
+            "Анализ журнала\n событий SELinux" : self.checkSELinuxLogs
         }
         self.setFuncs(self.functions)
         self.setParams(header = "модуля SELinux")

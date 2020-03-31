@@ -1,21 +1,9 @@
-"""Основной модуль программы"""
-#!usr/bin/python3
-from tkinter import Toplevel, BOTH, LEFT, TRUE, FALSE
+#from tkinter import Toplevel, BOTH, LEFT, TRUE, FALSE
 from tkinter import ttk
+from tkinter import *
 from ttkthemes import ThemedTk
-from tkinter import messagebox as mb
-from tkinter import filedialog as fd
 from ModuleLoader import Loader
-# from ACL import ACL_Tab
-# from Base import Base_Tab
-# from AppArmor import AppArmor_Tab
-# from Net import Net_Tab
-# from Log import Log_Tab
-# from SELinux import SELinux_Tab
-# from PAM import PAM_Tab
-# import importlib
-# import inspect
-from subprocess import Popen, PIPE, run
+from subprocess import PIPE, run
 
 root = ThemedTk(theme='radiance')
 passwd = Toplevel()
@@ -28,33 +16,6 @@ password = ''
 loader = None
 corr = False
 
-# nb = ttk.Notebook(root)
-# base_Frame = ttk.Frame(nb)
-# acl_Frame = ttk.Frame(nb)
-# aa_Frame = ttk.Frame(nb)
-# sel_Frame = ttk.Frame(nb)
-# pam_Frame = ttk.Frame(nb)
-# net_Frame = ttk.Frame(nb)
-# logs_Frame = ttk.Frame(nb)
-# addNewModule_Frame = ttk.Frame(nb)
-
-# nb.add(base_Frame, text='Base')
-# nb.add(acl_Frame, text='ACL')
-# nb.add(aa_Frame, text='Apparmor')
-# nb.add(sel_Frame, text='SELinux')
-# nb.add(net_Frame, text='Network')
-# nb.add(pam_Frame, text='PAM')
-# nb.add(logs_Frame, text='Logs')
-# nb.add(addNewModule_Frame, text='+')
-
-# base = Base_Tab(base_Frame, path="/home")
-# acl = ACL_Tab(acl_Frame, path='/home')
-# app_armor = AppArmor_Tab(aa_Frame)
-# selinux = SELinux_Tab(sel_Frame)
-# pam = PAM_Tab(pam_Frame)
-# net = Net_Tab(net_Frame)
-# log = Log_Tab(logs_Frame)
-
 def button_click(event):
     """Функция-обработчик нажатия кнопки подтверждения пароля"""
     password = pass_Entry.get()
@@ -63,24 +24,15 @@ def button_click(event):
         passwd.destroy()
         root.deiconify()
         loader = Loader(root, password)
-
-        # base.set_pass(password)
-        # acl.set_pass(password)
-        # app_armor.set_pass(password)
-        # selinux.set_pass(password)
-        # net.set_pass(password)
-
     else:
         pass_Label['text'] = 'Неверный пароль!'
 
 def correct(pas):
     """Функция проверки корректности пароля"""
-    sudopas = run('sudo -S a\n', shell=True, stdout=PIPE, stderr=PIPE, input=bytes(pas + '\n', 'utf-8'))
+    sudopas = run('sudo -S ls\n', shell=True, stdout=PIPE, stderr=PIPE, input=bytes(pas + '\n', 'utf-8'))
     out = sudopas.stderr.decode('utf-8')
     if out == '':
         out = sudopas.stdout.decode('utf-8')
-
-    if 'sudo: a:' in out:
         return True
     else:
         return False
@@ -93,39 +45,15 @@ def on_closing():
         loader.write_modules()
     root.destroy()
 
-# def change_tab(event):
-#     try:
-#         with open('./test/last.txt', 'r') as file:
-#             text = file.read()
-#             log.set_text(text)
-#     except FileNotFoundError:
-#         mb.showinfo("", "Файл /last.txt не найден")
-    
-#     if nb.tab(nb.select(), 'text') == '+':
-#         filename = fd.askopenfilename(filetypes=(("Python files", "*.py"), ("All files", "*.*")))
-#         module_name = filename.split('/')[-1].split('.')[0]
-#         module = importlib.import_module(module_name)
-#         tab = None
-#         for x in dir(module):
-#             obj = getattr(module, x)
-#             if inspect.isclass(obj) and "_Tab" in obj.__name__:
-#                 tab = obj
-#                 break
-#         new_frame = ttk.Frame(nb)
-#         nb.insert(nb.index('end') - 1, new_frame, text = module_name)
-#         new_tab = tab(new_frame)
-#         new_tab.set_pass(password)
+passwd.protocol("WM_DELETE_WINDOW", on_closing)
 
-sudopas = run('sudo -S a\n', shell=True, stdout=PIPE, stderr=PIPE, input=bytes(password + '\n', 'utf-8'))
+sudopas = run('sudo -S ls\n', shell=True, stdout=PIPE, stderr=PIPE, input=bytes(password + '\n', 'utf-8'))
 out = sudopas.stderr.decode('utf-8')
 if out == '':
     out = sudopas.stdout.decode('utf-8')
-
-if 'sudo a:' in out:
     corr = True
 else:
     corr = False
-
 
 if not corr:
     # Конфигурирование окна ввода пароля
@@ -159,28 +87,12 @@ else:
     passwd.destroy()
     root.deiconify()
     loader = Loader(root, password)
-    # base.set_pass(password)
-    # acl.set_pass(password)
-    # app_armor.set_pass(password)
-    # selinux.set_pass(password)
-    # pam.set_pass(password)
-    # net.set_pass(password)
-    #####################################################################
+    
 dw = (root.winfo_screenwidth() - wd) // 2
 dh = (root.winfo_screenheight() - ht) // 2
 root.wm_geometry('{}x{}+{}+{}'.format(wd, ht, dw, dh))
 
 root.title('Управление безопасностью Linux')
-
-#file = open('test/last.txt', 'w')
-#file.write('')
-#file.close()
-
-# nb.enable_traversal()
-# nb.select(base_Frame)
-# nb.bind('<<NotebookTabChanged>>', change_tab)
-
-# nb.pack(side=LEFT, fill=BOTH, expand=1)
 root.resizable(width=TRUE, height=FALSE)
 root.protocol("WM_DELETE_WINDOW", on_closing)
 root.mainloop()
