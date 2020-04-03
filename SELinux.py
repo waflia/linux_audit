@@ -24,21 +24,22 @@ class SELinux_Tab(Module):
 
         status = command_seq('sudo sestatus', self.password)
         if 'SELinuxstatus:enabled' not in status[0].replace(' ', ''):
-            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'))
+            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе ' 
+            + 'не настроен или отсутствует.\n'), 'warning')
             self.result.insert('end', "Рекомендация:\n"
-		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n") 
+		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n", 'recommendations') 
         else:
             command_result = command_seq('sudo getenforce')
             if 'enforcing' in command_result[0]:
-                self.result.insert('end', '{}\n'.format("SELinux находится в режиме enforced. Система защищена\n"))
+                self.result.insert('end', '{}\n'.format("SELinux находится в режиме enforced. Система защищена\n"), 'clear')
             elif 'permissive' in command_result[0]:
-                self.result.insert('end', '{}\n'.format("Внимание! SELinux находится в режиме регистрации событий безопасности!\n"))
+                self.result.insert('end', '{}\n'.format("Внимание! SELinux находится в режиме регистрации событий безопасности!\n"), 'recommendations')
                 self.result.insert('end', "Рекомендация:\n"
-                + "Если система не должна находиться в тестовом режиме, то необходимо сменить режим на enforce.\n\n ")
+                + "Если система не должна находиться в тестовом режиме, то необходимо сменить режим на enforce.\n\n ", 'recommendations')
             elif 'disabled' in command_result[0]:
-                self.result.insert('end', '{}\n'.format("Уязвимость! SELinux в системе неактивен!\n"))
+                self.result.insert('end', '{}\n'.format("Уязвимость! SELinux в системе неактивен!\n"), 'warning')
                 self.result.insert('end', "Рекомендация:\n"
-		        + "Активируйте работу SELinux путем установки режима permissive для тестировки или enforce для работы с системой.\n\n") 
+		        + "Активируйте работу SELinux путем установки режима permissive для тестировки или enforce для работы с системой.\n\n", 'recommendations') 
         return
 
     def checkSELinuxStatus(self):
@@ -49,9 +50,9 @@ class SELinux_Tab(Module):
         if 'SELinuxstatus:enabled' in status[0].replace(' ', ''):
             self.result.insert('end', status[0])
         else:
-            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'))
+            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'), 'warning')
             self.result.insert('end', "Рекомендация:\n"
-		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n") 
+		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n", 'recommendations') 
         return
 
     def checkSELinuxFolders(self):
@@ -60,9 +61,9 @@ class SELinux_Tab(Module):
 
         status = command_seq('sudo sestatus', self.password)
         if 'SELinuxstatus:enabled' not in status[0].replace(' ', ''):
-            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'))
+            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'), 'warning')
             self.result.insert('end', "Рекомендация:\n"
-		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n") 
+		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n", 'recommendations') 
         else:
             command_result = command_seq('sudo getenforce')
             if 'enforcing' in command_result[0]:
@@ -70,9 +71,10 @@ class SELinux_Tab(Module):
             elif 'permissive' in command_result[0]:
                 pass
             elif 'disabled' in command_result[0]:
-                self.result.insert('end', '%\n'.format("Уязвимость! SELinux в системе неактивен!\n"))
+                self.result.insert('end', '%\n'.format("Уязвимость! SELinux в системе неактивен!\n"), 'warning')
                 self.result.insert('end', "Рекомендация:\n"
-		        + "Активируйте работу SELinux путем установки режима permissive для тестировки или enforce для работы с системой.\n\n") 
+		        + "Активируйте работу SELinux путем установки режима permissive для" 
+                + "тестировки или enforce для работы с системой.\n\n", 'recommendations') 
         return
     
     def checkSELinuxProcesses(self):
@@ -81,15 +83,15 @@ class SELinux_Tab(Module):
         status = command_seq('sudo sestatus', self.password)
 
         if 'SELinuxstatus:enabled' not in status[0].replace(' ', ''):
-            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'))
+            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'), 'warning')
             self.result.insert('end', "Рекомендация:\n"
-		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n") 
+		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n", 'recommendations') 
         else:
             command_result = command_seq('ps -eZ| grep -s root')
             self.result.insert('end', '{}\n'.format("Важные процессы в системе работающие от имени root:\n{}\n".
             format(command_result)))
             self.result.insert('end', "Рекомендация:\n"
-		        + "Убедитесь в корректной работе данных процессов и при необходимости примите меры.\n\n") 
+		        + "Убедитесь в корректной работе данных процессов и при необходимости примите меры.\n\n", 'recommendations') 
         return
 
     def checkSELinuxUsers(self):
@@ -98,9 +100,9 @@ class SELinux_Tab(Module):
         status = command_seq('sudo sestatus', self.password)
 
         if 'SELinuxstatus:enabled' not in status[0].replace(' ', ''):
-            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'))
+            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'), 'warning')
             self.result.insert('end', "Рекомендация:\n"
-		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n") 
+		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n", 'recommedations') 
         else:
             command_result = command_seq('semanage login -l')
             self.result.insert('end', '{}\n'.format("Контексты SELinux для пользователей активных в системе:\n{}\n".
@@ -113,21 +115,19 @@ class SELinux_Tab(Module):
         status = command_seq('sudo sestatus', self.password)
 
         if 'SELinuxstatus:enabled' not in status[0].replace(' ', ''):
-            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'))
+            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'), 'warning')
             self.result.insert('end', "Рекомендация:\n"
-		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n") 
+		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n", 'recommendations') 
         else:
             command_result = command_seq('exec getsebool -a | grep -v off')
             self.result.insert('end', '{}\n'.format("Активные политики безопасности SELinux:\n{}\n".
             format(command_result)))
-            self.result.insert('end', "Рекомендация:\n"
-		        + "\n\n") 
             
             command_result = command_seq('exec getsebool -a | grep -s off')
             self.result.insert('end', '{}\n'.format("Отключенные политики безопасности SELinux:\n{}\n".
             format(command_result)))
             self.result.insert('end', "Рекомендация:\n"
-		        + "Отключить профили SELinux, проблемные поддержания для безопасности системы.\n\n") 
+		        + "Проверьте отключенные профили и включите их, если это необходимо для безопасности системы.\n\n", 'recommendations') 
         return
 
     def checkSELinuxPorts(self):
@@ -136,15 +136,15 @@ class SELinux_Tab(Module):
         status = command_seq('sudo sestatus', self.password)
 
         if 'SELinuxstatus:enabled' not in status[0].replace(' ', ''):
-            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'))
+            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'), 'warning')
             self.result.insert('end', "Рекомендация:\n"
-		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n") 
+		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n", 'recommendations') 
         else:
             command_result = command_seq('semanage port -l')
             self.result.insert('end', '{}\n'.format("Порты:\n{}\n".
             format(command_result)))
             self.result.insert('end', "Рекомендация:\n"
-		        + "Активировать профили SELinux, необходимые для безопасности портов системы.\n\n") 
+		        + "Активировать профили SELinux, необходимые для безопасности портов системы.\n\n", 'recommedations') 
         return
 
     def checkSELinuxLogs(self):
@@ -153,13 +153,13 @@ class SELinux_Tab(Module):
         status = command_seq('sudo sestatus', self.password)
 
         if 'SELinuxstatus:enabled' not in status[0].replace(' ', ''):
-            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'))
+            self.result.insert('end', '{}\n'.format('Внимание! Модуль SELinux в данной системе не настроен или отсутствует.\n'), 'warning')
             self.result.insert('end', "Рекомендация:\n"
-		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n") 
+		        + "Настройте SELinux при помощи установки соответствующих пакетов и библиотек.\n\n", 'recommendations') 
         else:
             command_result = command_seq('sudo cat < /var/log/audit/audit.log')
             self.result.insert('end', '{}\n'.
             format(command_result))
             self.result.insert('end', "Рекомендация:\n"
-		        + "Проанализируйте информацию последнего аудита событий SELinux и сделайте выводы о текущих уязвимостях.\n\n") 
+		        + "Проанализируйте информацию последнего аудита событий SELinux и сделайте выводы о текущих уязвимостях.\n\n", 'recommendations') 
         return

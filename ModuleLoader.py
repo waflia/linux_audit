@@ -1,6 +1,7 @@
 import json
 import importlib
 import inspect
+import os
 from tkinter import ttk
 from tkinter import LEFT, BOTH, messagebox as mb, filedialog as fd
 
@@ -10,6 +11,7 @@ from API import Module
 class Loader():
     def __init__(self, root_Frame, password):
         self.root = root_Frame
+        self.path = os.path.dirname(inspect.getfile(inspect.currentframe()))
         self.nb = ttk.Notebook(root_Frame)
         self.password = password
         self.modules = {}
@@ -29,7 +31,7 @@ class Loader():
 
     def read_modules(self):
         try:
-            with open('modules.json') as file:
+            with open(self.path + '/modules.json') as file:
                 self.modules = json.load(file)
         except:
             file.close()
@@ -42,7 +44,7 @@ class Loader():
                 self.modules.pop(key)
 
         try:
-            with open('modules.json', 'w') as file:
+            with open(self.path + '/modules.json', 'w') as file:
                 json.dump(self.modules, file)
         except(FileNotFoundError):
             pass
@@ -88,11 +90,11 @@ class Loader():
 
     def change_tab(self, event):
         try:
-            with open('./test/last.txt', 'r') as file:
+            with open(self.path + '/test/last.txt', 'r') as file:
                 text = file.read()
                 self.log.set_text(text)
         except FileNotFoundError:
-            mb.showinfo("", "Файл /last.txt не найден")
+            mb.showinfo("", "Файл last.txt не найден")
         
         if self.nb.tab(self.nb.select(), 'text') == '+':
             filenames = fd.askopenfilenames(filetypes=(("Python files", "*.py"), ("All files", "*.*")))

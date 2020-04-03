@@ -187,9 +187,9 @@ class AppArmor_Tab(Module):
         if 'apparmor module is loaded.' in status[0]:
             self.result.insert('end', status[0])
         else:
-            self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'))
+            self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'), 'warning')
             self.result.insert('end', "Рекомендация:\n"
-		        + "Настройте AppArmor при помощи установки соответствующих пакетов и библиотек.\n\n") 
+		        + "Настройте AppArmor при помощи установки соответствующих пакетов и библиотек.\n\n", 'recommendations') 
         return
 
     def check_sysprofiles(self):
@@ -209,14 +209,15 @@ class AppArmor_Tab(Module):
                     else:
                         vulnerable = True
                         self.result.insert('end', ' Профиль {} находится в режиме обучения.'
-                                                  ' Рекомендуется перевести его в режим ограничения\n'.format(profile))
+                                                  ' Рекомендуется перевести его в режим ограничения\n'.format(profile), 'recommendations')
 
             if not vulnerable:
-                self.result.insert('end', '{}\n'.format('Все основные профили загружены и настроены'))
+                self.result.insert('end', '{}\n'.format('Все основные профили загружены и настроены'), 'clear')
         else:
-            self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'), 'title')
+            self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'), 'warnings')
             self.result.insert('end', "Рекомендация:\n"
-		        + "Настройте AppArmor при помощи установки соответствующих пакетов и библиотек и проверьте наличие необходимых модулей\n\n") 
+		        + "Настройте AppArmor при помощи установки соответствующих пакетов" 
+                + "и библиотек и проверьте наличие необходимых модулей\n\n", 'recommendations') 
 
         return
 
@@ -229,10 +230,10 @@ class AppArmor_Tab(Module):
             unconfined_profiles = command_seq('sudo aa-unconfined', self.password)[0]
             self.result.insert('end', unconfined_profiles)
         else:
-            self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'))
+            self.result.insert('end', '{}\n'.format('Модуль AppArmor остановлен или отсутствует'), 'warning')
             self.result.insert('end', "Рекомендация:\n"
 		        + "Настройте AppArmor при помощи установки соответствующих пакетов и библиотек.\n"
-                + "Убедитесь, что необходимые профили загружены и включены.\n\n") 
+                + "Убедитесь, что необходимые профили загружены и включены.\n\n", 'recommendations') 
         return
 
     def check_logs(self):
@@ -244,7 +245,8 @@ class AppArmor_Tab(Module):
             logs = command_seq('sudo cat /var/log/kern.log | grep -s apparmor', self.password)[0].replace('\n', '\n  ')
             self.result.insert('end', logs)
         else:
-            self.result.insert('end', '{}\n'.format(' Модуль AppArmor остановлен или отсутствует'))
+            self.result.insert('end', '{}\n'.format(' Модуль AppArmor остановлен или отсутствует'), 'warning')
             self.result.insert('end', "Рекомендация:\n"
-		        + "Включите AppArmor если он отключен или настройте его при помощи установки соответствующих пакетов и библиотек.\n\n") 
+		        + "Включите AppArmor если он отключен или настройте его при" 
+                + "помощи установки соответствующих пакетов и библиотек.\n\n", 'recommendations') 
         return

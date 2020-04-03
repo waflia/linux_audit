@@ -8,10 +8,13 @@ class ACL_Tab(Module):
     def __init__(self, master, path='/'):
         super().__init__(master, True)
 
-        self.functions = {"Файлы с ACL": self.check_acl,
+        self.functions = {
+            "Файлы с ACL": self.check_acl,
             "Полные права": self.check_fullpermissions,
             "Права владельца": self.check_owner_permissions,
-            "Проверка ошибок": self.check_err}      
+            "Проверка ошибок": self.check_err
+            }   
+
         self.setFuncs(self.functions)
         self.setParams(header = "списков ACL")
     
@@ -30,12 +33,12 @@ class ACL_Tab(Module):
                 self.result.insert('end', ' Объект {} имеет расширенные права ACL: {}\n'.format(file, acl))
                 vulnerable = True
         if not vulnerable:
-            self.result.insert('end', ' Объекты с правами ACL не обнаружены\n')
+            self.result.insert('end', ' Объекты с правами ACL не обнаружены\n', 'clear')
         else:
             self.result.insert('end', "Рекомендация:\nУбедитесь, что права ACL на данные объекты необходимы.\n"  
                                + "В противном случае удалите или измените их на комбинацию," 
                                + " не нарушающую безопасности системы, командой:\n" 
-                                + "setfacl -m u:username:rwx obj_name.\n\n", 'recomendations')
+                                + "setfacl -m u:username:rwx obj_name.\n\n", 'recommendations')
         return
 
     def check_fullpermissions(self):
@@ -54,12 +57,12 @@ class ACL_Tab(Module):
                     self.result.insert('end', ' Объект {} имеет полную маску доступа ACL : {}\n'.format(file, acl))
                     vulnerable = True
         if not vulnerable:
-            self.result.insert('end', ' Объекты c полным доступом по маске ACL не обнаружены\n')
+            self.result.insert('end', ' Объекты c полным доступом по маске ACL не обнаружены\n', 'clear')
         else:
             self.result.insert('end', "Рекомендация:\nУбедитесь, что наличие полного доступа по маске не нарушает безопасности системы.\n"  
                                + "В противном случае удалите или измените маску ACL на комбинацию," 
                                + " не нарушающую безопасности системы, командой:\n" 
-                                + "setfacl -m m:rwx obj_name.\n\n", 'recomendations')
+                                + "setfacl -m m:rwx obj_name.\n\n", 'recommendations')
         return
 
     def check_owner_permissions(self):
@@ -89,12 +92,12 @@ class ACL_Tab(Module):
                             current[1], file, acl))
                         vulnerable = True
         if not vulnerable:
-            self.result.insert('end', ' Объекты с полными правами доступа ACL не обнаружены\n')
+            self.result.insert('end', ' Объекты с полными правами доступа ACL не обнаружены\n', 'clear')
         else:
             self.result.insert('end', "Рекомендация:\nУбедитесь, что полные права ACL на данные объекты для субъекты и группы необходимы.\n"  
-                               + "В противном случае удалите или измените их на комбинацию," 
-                               + " не нарушающую безопасности системы, командой:\n" 
-                                + "setfacl -m u:username:rwx obj_name\nsetfacl -m g:groupname:rwx obj_name\n\n", 'recomendations')
+            + "В противном случае удалите или измените их на комбинацию," 
+            + " не нарушающую безопасности системы, командой:\n" 
+            + "setfacl -m u:username:rwx obj_name\nsetfacl -m g:groupname:rwx obj_name\n\n", 'recommendations')
         return
 
     def check_err(self):
@@ -124,12 +127,10 @@ class ACL_Tab(Module):
                     vulnerable = True
 
         if not vulnerable:
-            self.result.insert('end', ' Объекты с ошибкой при настройке ACL не обнаружены\n')
+            self.result.insert('end', ' Объекты с ошибкой при настройке ACL не обнаружены\n', 'clear')
         else:
             self.result.insert('end', "Рекомендация:\nУбедитесь, что права ACL на данные объекты необходимы и установлены правильно.\n"  
                                + "В противном случае удалите или измените их на комбинацию," 
                                + " не нарушающую безопасности системы, командой:\n" 
-                                + "setfacl -m u:username:rwx obj_name.\n\n", 'recomendations')
+                                + "setfacl -m u:username:rwx obj_name.\n\n", 'recommendations')
         return
-
-assert issubclass(ACL_Tab, Module)

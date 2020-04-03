@@ -1,4 +1,5 @@
 #from tkinter import Toplevel, BOTH, LEFT, TRUE, FALSE
+import os
 from tkinter import ttk
 from tkinter import *
 from ttkthemes import ThemedTk
@@ -62,13 +63,13 @@ if not corr:
     dw = (root.winfo_screenwidth()-width)//2
     dh = (root.winfo_screenheight()-height)//2
     passwd.geometry('{}x{}+{}+{}'.format(width, height, dw, dh))
-    # passwd.iconbitmap(os.path.abspath("lock.ico"))
+
     passwd.resizable(False, False)
     passwd.title('Введите пароль суперпользователя')
 
     # Настройка виджетов в окне ввода пароля
     pass_Label = ttk.Label(tlevel_frame)
-    pass_Entry = ttk.Entry(tlevel_frame, font=16, show='⚫')
+    pass_Entry = ttk.Entry(tlevel_frame, font=16)#,how='⚫')
     pass_Btn = ttk.Button(tlevel_frame, text='OK', width=15)
 
     pass_Entry.bind('<Return>', button_click)
