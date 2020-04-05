@@ -1,1 +1,1 @@
-{"Base": "Base", "ACL": "ACL", "AppArmor": "AppArmor", "Net": "Net", "PAM": "PAM", "SELinux": "SELinux"}
+{"Base": "/home/user/diplom/linux_audit/modules/Base.py", "ACL": "/home/user/diplom/linux_audit/modules/ACL.py", "AppArmor": "/home/user/diplom/linux_audit/modules/AppArmor.py", "Net": "/home/user/diplom/linux_audit/modules/Net.py", "PAM": "/home/user/diplom/linux_audit/modules/PAM.py", "SELinux": "/home/user/diplom/linux_audit/modules/SELinux.py", "Procs": "/home/user/diplom/linux_audit/modules/Procs.py"}

@@ -4,7 +4,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 from tree import Tree
-from Log import write_log
+from Log import Log_Tab
     
 class Module():
     def __init__(self, master, enableTree):
@@ -51,12 +51,16 @@ class Module():
         self.result.pack(side=tk.TOP, fill=tk.BOTH, anchor='nw')
 
         self.abspath = os.path.abspath(self.path)
+        self.log = None
     
     def set_pass(self, pas):
         self.password = pas
         #if(self.treeEnabled):
         self.tree.set_pass(pas)
 
+    def set_logs(self, logs):
+        self.log = logs
+        
     def run_audit(self):
         self.result.delete('1.0', 'end')
         self.width = 72
@@ -76,7 +80,7 @@ class Module():
         self.result.insert('end', '\n Окончание аудита {}: '.format(self.header) + str(ending))
         self.result.see('end')
 
-        write_log(self.result.get('1.0', 'end'))
+        self.log.write_log(self.result.get('1.0', 'end'))
     
     def setFuncs(self, functions):
         funcsCount = len(functions)

@@ -5,9 +5,14 @@ from tkinter import filedialog as fd
 from tkinter import messagebox as mb
 
 
-class Log_Tab(object):
+class Log_Tab:
+    _instance = None
 
-    def __init__(self, master):
+    def __init__(self):
+        return Log_Tab._instance
+        
+    def __init__(self, master = None, main_path = ''):
+        self.main_path = main_path
 
         self.bar_Frame = ttk.Frame(master)
         self.text_Frame = ttk.Frame(master)
@@ -28,6 +33,7 @@ class Log_Tab(object):
 
         self.date = datetime.datetime.strftime(datetime.datetime.now(), "%d-%m-%y")
         self.date_label.configure(text=self.date)
+        Log_Tab._instance = self
 
     def set_text(self, text):
         self.log.delete('1.0', 'end')
@@ -42,11 +48,11 @@ class Log_Tab(object):
         except:
             mb.showinfo('Внимание', 'Файл не сохранен')
 
-def write_log(text):
-    try:
-        with open('./test/logs.txt', 'a') as file_log:
-            file_log.write(text)
-        with open('./test/last.txt', 'a') as last_log:
-            last_log.write(text)
-    except FileNotFoundError:
-        mb.showinfo("", "Файл ./test/last.txt не найден")
+    def write_log(self, text):
+        try:
+            with open(self.main_path + '/test/logs.txt', 'a') as file_log:
+                file_log.write(text)
+            with open(self.main_path + '/test/last.txt', 'a') as last_log:
+                last_log.write(text)
+        except FileNotFoundError:
+            mb.showinfo("", "Файл {} не найден".format(self.main_path + "/test/*"))
