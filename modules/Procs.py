@@ -5,17 +5,20 @@ class Procs_Tab(Module):
     def __init__(self, master):
         super().__init__(master, False)
 
-        self.functions = {
+        self.functions_procs = {
             "Процессы запущенные\n от имени root": self.checkRootProcs,
             "Процессы с различными\nUID и EUID ": self.checkUIDProcs,
             "Процессы с различными\n GID и EGID ":self.checkGIDProcs,
+        }
+        self.functions_tasks = {
             #"Процессы ограниченные\nchroot":self.checkChrootProcs,
             "Объекты atd": self.checkATD,
-            "Объекты crontab": self.checkCrontab,
-            "Анализ файлов crontab": self.checkCrontabFiles,
+            "Анализ файлов crontab": self.checkCrontab,
+            "Объекты crontab": self.checkCrontabFiles,
         }
-        self.setFuncs(self.functions)
-        self.setParams(header = "процессов в системе")
+        self.setFuncs(self.functions_tasks, secondModule = True)
+        self.setFuncs(self.functions_procs, firstModule = True)
+        self.setParams(header = "процессов в системе", first_module_header='Процессы', second_module_header='Задачи')
     
     def checkRootProcs(self):
         self.result.insert('end', '\n{}\n\n'.format('Анализ процессов, запущенных от имени root'), 'title')
@@ -132,7 +135,6 @@ class Procs_Tab(Module):
                 self.result.insert('end', 'Содержимое файла /etc/at.allow:\n')
                 self.result.insert('end', allow_file)
             
-
     def checkCrontab(self):
         self.result.insert('end', '\n{}\n\n'.format('Анализ файлов crontab'), 'title')
         self.result.update()
@@ -176,7 +178,6 @@ class Procs_Tab(Module):
                 allow_file = command_seq('sudo cat /etc/cron.allow', self.password)[0]
                 self.result.insert('end', 'Содержимое файла /etc/cron.allow:\n')
                 self.result.insert('end', allow_file)
-            
 
     def checkCrontabFiles(self):
         self.result.insert('end', '\n{}\n\n'.format('Задачи crontab'), 'title')

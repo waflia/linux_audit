@@ -20,9 +20,10 @@ class Module():
 
         self.frame = ttk.LabelFrame(master, text="Результат аудита")
         self.conf_frame = ttk.Frame(master, width=260)
-
-        #if(enableTree):
+        self.first_module_frame = ttk.LabelFrame(self.conf_frame, width=260)
+        self.second_module_frame = ttk.LabelFrame(self.conf_frame, width=260)
         self.tree_frame = ttk.Frame(self.conf_frame, width=260)
+
         self.tree = Tree(self.tree_frame, path=self.path)
 
         self.result = tk.Text(self.frame, wrap='word', height=36)
@@ -82,23 +83,44 @@ class Module():
 
         self.log.write_log(self.result.get('1.0', 'end'))
     
-    def setFuncs(self, functions):
+    def setFuncs(self, functions, firstModule = False, secondModule = False):
         funcsCount = len(functions)
-        self.vars = [tk.IntVar() for i in range(funcsCount)]
+        self_count = len(self.funcs)
+        if self.vars == []:
+            self.vars = [tk.IntVar() for i in range(funcsCount)]
+        else:
+            for i in range(funcsCount):
+                self.vars.append(tk.IntVar())
         for var in self.vars:
-            var.set(1)
-        i = 0
+                var.set(1)
+        i = self_count
+        
+        frame = self.conf_frame
+        if secondModule:
+            frame = self.second_module_frame
+        if firstModule:
+            frame = self.first_module_frame
+
         for key in functions.keys():
-            ttk.Checkbutton(self.conf_frame, text=key, 
+            ttk.Checkbutton(frame, text=key, 
                             variable=self.vars[i], 
                             onvalue=1, 
                             offvalue=0).pack(side=tk.BOTTOM, anchor='sw', padx=5, pady=0)
             self.funcs.append(functions[key])
             i += 1
+        
+        if firstModule:
+            self.first_module_frame.pack(side=tk.BOTTOM, fill=tk.X, anchor='sw', pady=5, padx=5)
+
+        if secondModule:
+            self.second_module_frame.pack(side=tk.BOTTOM, fill=tk.X, anchor='sw', pady=5, padx=5)
+
         if(self.treeEnabled):
             self.tree_frame.pack(side=tk.BOTTOM, fill=tk.Y, anchor='w', pady=5, padx=5, expand=1)
         
-    def setParams(self, header):
+    def setParams(self, header, first_module_header = '', second_module_header = ''):
         self.header = header
+        self.first_module_frame.configure(text=first_module_header)
+        self.second_module_frame.configure(text=second_module_header)
 
     
