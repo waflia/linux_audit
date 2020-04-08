@@ -1,4 +1,3 @@
-#from tkinter import Toplevel, BOTH, LEFT, TRUE, FALSE
 import os
 from tkinter import ttk
 from tkinter import *

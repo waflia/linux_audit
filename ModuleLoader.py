@@ -81,9 +81,13 @@ class Loader():
     def importModules(self):
         for tab_name, module_name in self.modules.items():
             module = None
-            spec = importlib.util.spec_from_file_location(tab_name, module_name)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
+            try:
+                spec = importlib.util.spec_from_file_location(tab_name, module_name)
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+            except: 
+                self.modules[tab_name] = ''
+                continue
             tab = None
             for x in dir(module):
                 obj = getattr(module, x)
@@ -113,5 +117,7 @@ class Loader():
                 module_name = filename.split('/')[-1].split('.')[0]
                 spec = importlib.util.spec_from_file_location(module_name, filename)
                 self.addModule(module_name, filename, spec)
+            if filenames == ():
+                self.nb.select(self.nb.index(0))
 
         

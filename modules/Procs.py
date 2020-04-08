@@ -69,27 +69,7 @@ class Procs_Tab(Module):
             self.result.insert('end', "Рекомендация:\n"
 		        + "Необходимо проанализировать данные процессы и, если необходимо завершить командой pkill\n", 'recommendations')
         else:
-            self.result.insert('end', "Процессы с различными GID и EGID не обнаружены\n", 'clear')
-    
-# def checkChrootProcs(self):
-    #     self.result.insert('end', '\n{}\n\n'.format('Анализ процессов ограниченных chroot'), 'title')
-    #     self.result.update()
-    #     vulnerable = False
-    #     egids = command_seq('sudo ps -eo egroup', self.password)[0].split('\n')
-    #     gids = command_seq('sudo ps -eo rgroup', self.password)[0].split('\n')
-    #     procs = command_seq('sudo ps -e')[0].split('\n')
-
-    #     for i in range(1, len(egids)):
-    #         if egids[i] != gids[i]:
-    #             vulnerable = True
-    #             self.result.insert('end', 'Процесс {0} имеет различные GID и EGID\n'.format(procs[i]))
-        
-    #     if vulnerable:
-    #         self.result.insert('end', "Рекомендация:\n"
-	# 	        + "Необходимо проанализировать данные процессы и, если необходимо завершить командой pkill\n", 'recommendations')
-    #     else:
-    #         self.result.insert('end', "Процессы с различными GID и EGID не обнаружены\n", 'clear')
-    
+            self.result.insert('end', "Процессы с различными GID и EGID не обнаружены\n", 'clear') 
 
     def checkATD(self):
         self.result.insert('end', '\n{}\n\n'.format('Анализ файлов atd'), 'title')
