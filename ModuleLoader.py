@@ -5,6 +5,7 @@ import os
 from tkinter import ttk
 from tkinter import LEFT, BOTH, messagebox as mb, filedialog as fd
 
+from mainTab import main_Tab
 from Log import Log_Tab
 from API import Module
 
@@ -18,6 +19,10 @@ class Loader():
         addNewModule_Frame = ttk.Frame(self.nb)
         self.log = Log_Tab(logs_Frame, self.path)
 
+        mainFrame = ttk.Frame(self.nb)
+        self.main = main_Tab(mainFrame, main_path=self.path)
+        self.nb.add(mainFrame, text='Main')
+        
         self.modules = {}
         self.read_modules()
         self.importModules()
