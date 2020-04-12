@@ -105,6 +105,7 @@ class Loader():
                 newTab = tab(tabFrame)
                 newTab.set_pass(self.password)
                 newTab.set_logs(self.log)
+                self.main.modules[tab_name] = [newTab.functions, newTab.vars]
             else:
                 self.modules[tab_name] = ''
 

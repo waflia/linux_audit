@@ -185,6 +185,7 @@ class AppArmor_Tab(Module):
             "Защита портов\n с помощью SELinux": self.checkSELinuxPorts,
             "Анализ журнала\n событий SELinux" : self.checkSELinuxLogs
         }
+        self.functions = [self.functions_aa, self.functions_sel]
         self.setFuncs(self.functions_sel, secondModule = True)
         self.setFuncs(self.functions_aa, firstModule = True)
         

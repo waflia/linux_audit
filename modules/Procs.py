@@ -16,6 +16,7 @@ class Procs_Tab(Module):
             "Анализ файлов crontab": self.checkCrontab,
             "Объекты crontab": self.checkCrontabFiles,
         }
+        self.functions = [self.functions_procs, self.functions_tasks]
         self.setFuncs(self.functions_tasks, secondModule = True)
         self.setFuncs(self.functions_procs, firstModule = True)
         self.setParams(header = "процессов в системе", first_module_header='Процессы', second_module_header='Задачи')
@@ -70,6 +71,7 @@ class Procs_Tab(Module):
 		        + "Необходимо проанализировать данные процессы и, если необходимо завершить командой pkill\n", 'recommendations')
         else:
             self.result.insert('end', "Процессы с различными GID и EGID не обнаружены\n", 'clear') 
+
 
     def checkATD(self):
         self.result.insert('end', '\n{}\n\n'.format('Анализ файлов atd'), 'title')

@@ -2,6 +2,7 @@ import os
 import json
 from tkinter import ttk
 import tkinter as tk
+from ttkwidgets import CheckboxTreeview
 
 from other.scrollableFrame import VerticalScrolledFrame
 
@@ -10,6 +11,7 @@ class main_Tab:
     def __init__(self, master, main_path = ''):
         self.main_path = main_path
         self.master = master
+        self.modules = {}
 
         self.fio = ''
         self.org = ''
@@ -45,10 +47,13 @@ class main_Tab:
         self.org_Entry.grid(row=4, column=0, sticky='nsew', padx=10)
         self.fio_OK_btn.grid(row=5, column=0, sticky='se', padx=10)
 
-        ttk.Style().configure('Vertical.TScrollbar', troughcolor='#f6f4f2', relief=tk.GROOVE)
-
+        self.profileView = CheckboxTreeview(self.current_Frame)
         self.save_audit_btn = ttk.Button(self.btn_Frame, text='Сохранить профиль', command=self.save_btn_click)
         self.run_audit_btn = ttk.Button(self.btn_Frame, text='Запустить аудит', command=self.run_audit)
+
+        self.ysb = ttk.Scrollbar(self.current_Frame, orient='vertical', command=self.profileView.yview)
+        self.profileView.configure(yscroll=self.ysb.set)
+        ttk.Style().configure('Vertical.TScrollbar', troughcolor='#f6f4f2', relief=tk.GROOVE)
 
         #Размещения на фреймах
         leftFrame.pack(side=tk.LEFT, anchor='nw', fill=tk.Y)
@@ -60,11 +65,15 @@ class main_Tab:
         self.current_Frame.pack(side=tk.TOP, anchor='nw', padx=5, pady=5, fill=tk.BOTH, expand=1)
         self.btn_Frame.pack(side=tk.TOP, anchor='nw', fill=tk.X)
         
+        self.ysb.pack(side=tk.RIGHT, anchor='n', fill=tk.Y)
+        self.profileView.pack(side=tk.TOP, anchor='nw', fill=tk.BOTH, expand=1)
         self.save_audit_btn.pack(side=tk.LEFT, anchor='sw', padx=5, pady=5)
         self.run_audit_btn.pack(side=tk.LEFT, anchor='se', padx=5, pady=5, fill=tk.X, expand=1)
         
         self.auditor_Frame.grid_rowconfigure(2, minsize=30)
-        self.loadProfiles()        
+        self.loadProfiles()   
+        self.initTree()
+        self.updateCurrentProfile()     
         
     def run_audit(self):
         pass
@@ -112,7 +121,8 @@ class main_Tab:
             json.dump(self.profiles, file)
 
     def changeCurrentProfile(self):
-        self.profiles_Label.configure(text=self.var.get())
+        self.updateCurrentProfile()
+        #self.profiles_Label.configure(text=self.var.get())
 
     def save_btn_click(self):
         self.saveDialog = tk.Toplevel()
@@ -154,5 +164,28 @@ class main_Tab:
         self.loadProfiles()
         self.saveDialog.destroy()
         
-        
-        
+    def updateCurrentProfile(self):
+        self.profileView.collapse_all()
+        self.profileView.heading('#0', text=list(self.profiles.keys())[self.var.get()], anchor='w')
+
+    def initTree(self):
+        self.current_profile_options=dict(self.profiles["Профиль по умолчанию"])
+        for (key, value) in self.current_profile_options.items():
+            self.profileView.insert("", "end", key, text=key)
+            if type(value) == type("1"):
+                for i in range(len(value)):
+                    self.profileView.insert(key, "end", str(key) + str(i), text=str(i))
+                    if value[i] == '0':
+                        self.profileView.change_state(str(key) + str(i), 'unchecked')
+                    if value[i] == '1':
+                        self.profileView.change_state(str(key) + str(i), 'checked')
+            else:
+                for (second_key, second_value) in dict(value).items():
+                    self.profileView.insert(key, "end", second_key, text=second_key)
+                    if second_value[0] == '0' or second_value[0] == '1':
+                        for j in range(len(second_value)):
+                            self.profileView.insert(second_key, "end", str(second_key) + str(j), text=str(j))
+                            if second_value[j] == '0':
+                                self.profileView.change_state(str(second_key) + str(j), 'unchecked')
+                            if second_value[j] == '1':
+                                self.profileView.change_state(str(second_key) + str(j), 'checked')
