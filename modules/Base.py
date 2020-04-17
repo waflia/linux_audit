@@ -19,16 +19,16 @@ class Base_Tab(Module):
                          '/etc/init.d':         'rwxr-x---',
                          '/var/log':            'rwxr-x--x'}
         
-        self.functions = {"Маска":self.check_mask,
-                    "Полные права": self.check_fullpermissions,
-                    "Права владельца": self.check_owner_permissions,
-                    "Системные файлы": self.check_system,
-                    "Файлы без прав":self.check_none_permissions,
-                    "Невидимые файлы": self.check_unvisible,
-                    "Nobody,Nogroup": self.check_none_og,
-                    "Suid": self.check_suid,
-                    "Sgid": self.check_sgid,
-                    "Sticky": self.check_sticky}
+        self.functions = {"Проверка текущей маски\n пользователя":self.check_mask,
+                    'Поиск файлов с полными\n правами для категории\n "Все остальные"': self.check_fullpermissions,
+                    "Поиск файлов с неправильными\nправами владельца": self.check_owner_permissions,
+                    "Анализ режима доступа\n системных каталогов": self.check_system,
+                    "Объекты без доступа":self.check_none_permissions,
+                    "Поиск закрытых каталогов": self.check_unvisible,
+                    'Файлы с владельцем "nobody"\n и группой "nogroup"': self.check_none_og,
+                    "Объекты с битом SUID": self.check_suid,
+                    "Объекты с битом SGID": self.check_sgid,
+                    "Объекты со Sticky-битом": self.check_sticky}
         
         self.setFuncs(self.functions)
         self.setParams(header = "базовой СКД")

@@ -11,7 +11,7 @@ class main_Tab:
     def __init__(self, master, main_path = ''):
         self.main_path = main_path
         self.master = master
-        self.modules = {}
+        self.modules = {} #{module_name : }
 
         self.fio = ''
         self.org = ''
@@ -72,8 +72,8 @@ class main_Tab:
         
         self.auditor_Frame.grid_rowconfigure(2, minsize=30)
         self.loadProfiles()   
-        self.initTree()
-        self.updateCurrentProfile()     
+        #self.initTree()
+        #self.updateCurrentProfile()     
         
     def run_audit(self):
         pass
@@ -121,6 +121,8 @@ class main_Tab:
             json.dump(self.profiles, file)
 
     def changeCurrentProfile(self):
+        currentProfileName = list(self.profiles.keys())[self.var.get()]
+        self.current_profile_options=self.profiles[currentProfileName]
         self.updateCurrentProfile()
         #self.profiles_Label.configure(text=self.var.get())
 
@@ -167,25 +169,47 @@ class main_Tab:
     def updateCurrentProfile(self):
         self.profileView.collapse_all()
         self.profileView.heading('#0', text=list(self.profiles.keys())[self.var.get()], anchor='w')
+        self.initTree()
 
     def initTree(self):
-        self.current_profile_options=dict(self.profiles["Профиль по умолчанию"])
+        if self.current_profile_options == {}:
+            self.current_profile_options=dict(self.profiles["Профиль по умолчанию"])
         for (key, value) in self.current_profile_options.items():
-            self.profileView.insert("", "end", key, text=key)
+
+            if not self.profileView.exists(key):
+                self.profileView.insert("", "end", key, text=key)
+
             if type(value) == type("1"):
-                for i in range(len(value)):
-                    self.profileView.insert(key, "end", str(key) + str(i), text=str(i))
+                i = 0
+                for func_key in self.modules[key][0].keys():
+                    func_key = func_key.replace('\n', ' ')
+
+                    if not self.profileView.exists(key + func_key):
+                        self.profileView.insert(key, "end", key + func_key, text=func_key)
+
                     if value[i] == '0':
-                        self.profileView.change_state(str(key) + str(i), 'unchecked')
+                        self.profileView.change_state(key + func_key, 'unchecked')
                     if value[i] == '1':
-                        self.profileView.change_state(str(key) + str(i), 'checked')
+                        self.profileView.change_state(key + func_key, 'checked')
+                    i+=1
             else:
+                j = 0
                 for (second_key, second_value) in dict(value).items():
-                    self.profileView.insert(key, "end", second_key, text=second_key)
-                    if second_value[0] == '0' or second_value[0] == '1':
-                        for j in range(len(second_value)):
-                            self.profileView.insert(second_key, "end", str(second_key) + str(j), text=str(j))
-                            if second_value[j] == '0':
-                                self.profileView.change_state(str(second_key) + str(j), 'unchecked')
-                            if second_value[j] == '1':
-                                self.profileView.change_state(str(second_key) + str(j), 'checked')
+
+                    if not self.profileView.exists(second_key):
+                        self.profileView.insert(key, "end", second_key, text=second_key)
+
+                    if type(value[second_key]) == type("1"):
+                        i = 0
+                        for func_key in self.modules[key][0][j].keys():
+                            func_key = func_key.replace('\n', ' ')
+
+                            if not self.profileView.exists(second_key + func_key):
+                                self.profileView.insert(second_key, "end", second_key + func_key, text=func_key)
+                            
+                            if value[second_key][i] == '0':
+                                self.profileView.change_state(second_key + func_key, 'unchecked')
+                            if value[second_key][i] == '1':
+                                self.profileView.change_state(second_key + func_key, 'checked')
+                            i+=1
+                    j+=1

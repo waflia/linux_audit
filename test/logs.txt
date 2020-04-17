@@ -7078,3 +7078,444 @@ ALL: ALL
 
  Окончание аудита модуля PAM: 2020-04-08 19:13:22
 
+ Начало аудита базовой СКД:    2020-04-13 01:09:45
+
+Проверка текущей маски
+
+ Текущая маска пользователя: UMASK		022
+
+Поиск объектов с полными правами для категории "Все остальные"
+
+ /home/user/diplom : drwxrwxrwx
+ /home/user/diplom/linux_audit : drwxrwxrwx
+ /home/user/diplom/linux_audit/build : drwxrwxrwx
+ /home/user/diplom/linux_audit/dist : drwxrwxrwx
+ /home/user/diplom/linux_audit/modules : drwxrwxrwx
+ /home/user/diplom/linux_audit/other : drwxrwxrwx
+ /home/user/diplom/linux_audit/__pycache__ : drwxrwxrwx
+ /home/user/diplom/linux_audit/test : drwxrwxrwx
+ /home/user/diplom/linux_audit/build/main : drwxrwxrwx
+ /home/user/diplom/linux_audit/modules/__pycache__ : drwxrwxrwx
+ /home/user/diplom/linux_audit/other/__pycache__ : drwxrwxrwx
+
+Рекомендация:
+Необходимо исключить полный доступ постановкой на каталоги прав 755, у файлов - прав 644 .
+Либо поставить любую другую комбинацию прав, не нарушающую безопасностиданного объекта и общей безопасности системы.
+
+
+Поиск объектов с неправильно настроенными правами владельца
+
+ Объекты с неправильно настроенными правами владельца не обнаружены
+
+Проверка режима доступа важных системных объектов
+
+ Права объекта: /etc/shadow:rw-r----- отличны от рекомендуемых: rw-------
+ Права объекта: /etc/hosts.allow:rw-r--r-- отличны от рекомендуемых: rw-------
+ Права объекта: /etc/hosts.deny:rw-r--r-- отличны от рекомендуемых: rw-------
+ Права объекта: /etc/logrotate.conf:rw-r--r-- отличны от рекомендуемых: rw-r-----
+ Права объекта: /etc/rsyslog.conf:rw-r--r-- отличны от рекомендуемых: rw-r-----
+ Права объекта: /etc/pam.d:rwxr-xr-x отличны от рекомендуемых: rwxr-x---
+ Права объекта: /etc/securetty:rw-r--r-- отличны от рекомендуемых: rw-------
+ Права объекта: /etc/security:rwxr-xr-x отличны от рекомендуемых: rw-------
+ Права объекта: /etc/init.d:rwxr-xr-x отличны от рекомендуемых: rwxr-x---
+ Права объекта: /var/log:rwxrwxr-x отличны от рекомендуемых: rwxr-x--x
+
+Рекомендация:
+Убедитесь, что режимы доступа системных объектов не создают потенциальных угроз.
+Если необходимо, то измените их на рекомендуемые.
+
+
+Проверка необходимых прав доступа к объектам
+
+ Права доступа к объектам не нарушены
+
+Проверка необходимых прав на чтение каталогов для владельца
+
+ Необходимые права на чтение каталогов не нарушены
+
+Поиск объектов с владельцем "nobody" и группой владельца "nogroup"
+
+ Объекты без владельца и группы не обнаружены
+
+Поиск объектов с SUID-битом
+
+ Объекты с SUID-битом не обнаружены
+
+Поиск объектов со SGID-битом
+
+ Объекты со SGID-битом не обнаружены
+
+Поиск объектов со Sticky-битом
+
+ Объекты со Sticky-битом не обнаружены
+
+ Окончание аудита базовой СКД: 2020-04-13 01:09:49
+
+ Начало аудита сетевых интерфейсов:    2020-04-13 01:15:41
+
+
+Проверка открытых TCP и UDP портов
+
+Открытые TCP порты не обнаружены
+
+ Открытые UDP порты не обнаружены
+
+
+Проверка открытых сокетов
+
+Открытые сокеты не обнаружены
+
+Поиск внешних открытых портов
+
+ Утилита nmap не установлена
+Для продолжения необходимо установить утилиту nmap
+
+Поиск опасных открытых портов
+
+ Утилита nmap не установлена
+ Для продолжения необходимо установить утилиту nmap
+
+Проверка терминалов доступа
+
+ Нет подключенных терминалов
+ Терминалы подключенные от имени root не обнаружены
+
+
+Проверка статуса межсетевого экрана iptables
+
+Статус iptables в системе:
+iptables v1.6.1
+
+Межсетевой экран настроен неправильно или не настроены правила iptables
+Рекомендация:
+Установите необходимые пакеты и настройте правила для межсетевого экрана
+
+
+Анализ файла /etc/hosts.allow
+
+Правила hosts.allow:
+ALL: ALL
+
+
+Анализ файла /etc/hosts.deny
+
+В файле /etc/hosts.deny нет настроенных правил
+
+Проверка сатуса сервиса ssh
+
+Статус ssh в системе:
+ * sshd is not running
+
+Настройки ssh:
+	Host *
+	SendEnv LANG LC_*
+	HashKnownHosts yes
+	GSSAPIAuthentication yes
+
+Настройки sshd:
+	PasswordAuthentication no
+	ChallengeResponseAuthentication no
+	UsePAM yes
+	X11Forwarding yes
+	PrintMotd no
+	AcceptEnv LANG LC_*
+	Subsystem	sftp	/usr/lib/openssh/sftp-server
+
+ Окончание аудита сетевых интерфейсов: 2020-04-13 01:15:45
+
+ Начало аудита процессов в системе:    2020-04-13 01:15:59
+
+
+Анализ файлов atd
+
+Содержимое файла /etc/at.deny:
+alias
+backup
+bin
+daemon
+ftp
+games
+gnats
+guest
+irc
+lp
+mail
+man
+nobody
+operator
+proxy
+qmaild
+qmaill
+qmailp
+qmailq
+qmailr
+qmails
+sync
+sys
+www-data
+
+Файл /etc/at.allow отсутствует.
+Рекомендация:
+Создайте файл /etc/at.allow с помощью touch и установите режим доступа 640
+
+Анализ файлов crontab
+
+Файл /etc/cron.deny отсутствует. Любой пользователь может использовать crontab
+Рекомендация:
+Создайте файл /etc/cron.deny с помощью touch и установите режим доступа 640
+
+Файл /etc/cron.allow отсутствует.
+Рекомендация:
+Создайте файл /etc/cron.allow с помощью touch и установите режим доступа 640
+
+Задачи crontab
+
+
+Задачи, выполняемые каждый час, отсутствуют
+
+Задачи, выполняемые каждый день:
+	apport
+	apt-compat
+	bsdmainutils
+	dpkg
+	logrotate
+	man-db
+	mdadm
+	mlocate
+	passwd
+	popularity-contest
+	ubuntu-advantage-tools
+	update-notifier-common
+	
+Задачи, выполняемые каждую неделю:
+	man-db
+	update-notifier-common
+	
+Задачи, выполняемые каждый месяц отсутствуют
+
+Рекомендация:
+Проанализируйте содержимое задач и убедитесь, что они безопасны, иначе удалите их
+
+Анализ процессов, запущенных от имени root
+
+Процессы, запущенные от имени root:
+PID TTY STAT START TIME COMMAND
+1 ? Ssl Apr10 0:00 /init
+7464 tty1 Ss Apr12 0:00 /init
+13718 pts/1 S 01:16 0:00 sudo
+13720 pts/1 R 01:16 0:00 ps
+
+Рекомендация:
+Проанализируйте данные процессы на предмет подозрительной активности и,если необходимо, завершите их командой pkill <Имя процесса>
+
+Анализ процессов c различными UID и EUID
+
+Процессы с различными UID и EUID не обнаружены
+
+Анализ процессов c различными GID и EGID
+
+Процессы с различными GID и EGID не обнаружены
+
+ Окончание аудита процессов в системе: 2020-04-13 01:16:02
+
+ Начало аудита процессов в системе:    2020-04-13 01:17:07
+
+
+Анализ файлов atd
+
+Содержимое файла /etc/at.deny:
+alias
+backup
+bin
+daemon
+ftp
+games
+gnats
+guest
+irc
+lp
+mail
+man
+nobody
+operator
+proxy
+qmaild
+qmaill
+qmailp
+qmailq
+qmailr
+qmails
+sync
+sys
+www-data
+
+Файл /etc/at.allow отсутствует.
+Рекомендация:
+Создайте файл /etc/at.allow с помощью touch и установите режим доступа 640
+
+Анализ файлов crontab
+
+Файл /etc/cron.deny отсутствует. Любой пользователь может использовать crontab
+Рекомендация:
+Создайте файл /etc/cron.deny с помощью touch и установите режим доступа 640
+
+Файл /etc/cron.allow отсутствует.
+Рекомендация:
+Создайте файл /etc/cron.allow с помощью touch и установите режим доступа 640
+
+Анализ процессов c различными UID и EUID
+
+Процессы с различными UID и EUID не обнаружены
+
+Анализ процессов c различными GID и EGID
+
+Процессы с различными GID и EGID не обнаружены
+
+ Окончание аудита процессов в системе: 2020-04-13 01:17:09
+
+ Начало аудита процессов в системе:    2020-04-13 01:17:37
+
+
+Анализ файлов atd
+
+Содержимое файла /etc/at.deny:
+alias
+backup
+bin
+daemon
+ftp
+games
+gnats
+guest
+irc
+lp
+mail
+man
+nobody
+operator
+proxy
+qmaild
+qmaill
+qmailp
+qmailq
+qmailr
+qmails
+sync
+sys
+www-data
+
+Файл /etc/at.allow отсутствует.
+Рекомендация:
+Создайте файл /etc/at.allow с помощью touch и установите режим доступа 640
+
+Задачи crontab
+
+
+Задачи, выполняемые каждый час, отсутствуют
+
+Задачи, выполняемые каждый день:
+	apport
+	apt-compat
+	bsdmainutils
+	dpkg
+	logrotate
+	man-db
+	mdadm
+	mlocate
+	passwd
+	popularity-contest
+	ubuntu-advantage-tools
+	update-notifier-common
+	
+Задачи, выполняемые каждую неделю:
+	man-db
+	update-notifier-common
+	
+Задачи, выполняемые каждый месяц отсутствуют
+
+Рекомендация:
+Проанализируйте содержимое задач и убедитесь, что они безопасны, иначе удалите их
+
+Анализ процессов c различными UID и EUID
+
+Процессы с различными UID и EUID не обнаружены
+
+Анализ процессов c различными GID и EGID
+
+Процессы с различными GID и EGID не обнаружены
+
+ Окончание аудита процессов в системе: 2020-04-13 01:17:39
+
+ Начало аудита процессов в системе:    2020-04-13 01:20:22
+
+
+Анализ файлов atd
+
+Содержимое файла /etc/at.deny:
+alias
+backup
+bin
+daemon
+ftp
+games
+gnats
+guest
+irc
+lp
+mail
+man
+nobody
+operator
+proxy
+qmaild
+qmaill
+qmailp
+qmailq
+qmailr
+qmails
+sync
+sys
+www-data
+
+Файл /etc/at.allow отсутствует.
+Рекомендация:
+Создайте файл /etc/at.allow с помощью touch и установите режим доступа 640
+
+Задачи crontab
+
+
+Задачи, выполняемые каждый час, отсутствуют
+
+Задачи, выполняемые каждый день:
+	apport
+	apt-compat
+	bsdmainutils
+	dpkg
+	logrotate
+	man-db
+	mdadm
+	mlocate
+	passwd
+	popularity-contest
+	ubuntu-advantage-tools
+	update-notifier-common
+	
+Задачи, выполняемые каждую неделю:
+	man-db
+	update-notifier-common
+	
+Задачи, выполняемые каждый месяц отсутствуют
+
+Рекомендация:
+Проанализируйте содержимое задач и убедитесь, что они безопасны, иначе удалите их
+
+Анализ процессов c различными UID и EUID
+
+Процессы с различными UID и EUID не обнаружены
+
+Анализ процессов c различными GID и EGID
+
+Процессы с различными GID и EGID не обнаружены
+
+ Окончание аудита процессов в системе: 2020-04-13 01:20:24
+

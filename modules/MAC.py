@@ -154,7 +154,7 @@ class AppArmor_Tab2(object):
         return
 
 
-class AppArmor_Tab(Module):
+class MAC_Tab(Module):
     def __init__(self, master):
         super().__init__(master, False)
 

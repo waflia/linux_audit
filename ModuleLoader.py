@@ -5,7 +5,7 @@ import os
 from tkinter import ttk
 from tkinter import LEFT, BOTH, messagebox as mb, filedialog as fd
 
-from mainTab import main_Tab
+from profs import main_Tab
 from Log import Log_Tab
 from API import Module
 

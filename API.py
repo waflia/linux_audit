@@ -29,7 +29,7 @@ class Module():
         self.result = tk.Text(self.frame, wrap='word', height=36)
         self.result.tag_configure('title', font=('Verdana', 12, 'bold'), justify='center')
         self.result.tag_configure('warning', font=('Verdana', 10, 'bold'), foreground="red")
-        self.result.tag_configure('recommendations', font=('Verdana', 10, 'bold'), foreground="yellow")
+        self.result.tag_configure('recommendations', font=('Verdana', 10, 'bold'), foreground="#f08c14")
         self.result.tag_configure('clear', font=('Verdana', 10, 'bold'), foreground="green")
 
         self.btn_run = ttk.Button(self.conf_frame, text='Запуск аудита', width = 26,command=self.run_audit)
