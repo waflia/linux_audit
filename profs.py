@@ -28,8 +28,6 @@ class main_Tab:
         #Правый фрейм включает редактор текущего профиля и кнопку запуска аудита
         rightFrame = ttk.Frame(master)
         self.current_Frame = ttk.LabelFrame(rightFrame, text='Текущий профиль')
-        #self.profiles_Label = ttk.Label(self.current_Frame, text='Текущий профиль')
-        #self.profiles_Label.pack(side=tk.TOP, anchor='nw', expand=1, fill=tk.BOTH)
         self.btn_Frame = ttk.Frame(rightFrame)
 
         #Область данных об аудиторе
@@ -71,9 +69,8 @@ class main_Tab:
         self.run_audit_btn.pack(side=tk.LEFT, anchor='se', padx=5, pady=5, fill=tk.X, expand=1)
         
         self.auditor_Frame.grid_rowconfigure(2, minsize=30)
-        self.loadProfiles()   
-        #self.initTree()
-        #self.updateCurrentProfile()     
+        self.loadProfiles() 
+        self.profileView.bind("<Button-1>", self.check_uncheck_item, True)
         
     def run_audit(self):
         pass
@@ -123,7 +120,8 @@ class main_Tab:
     def changeCurrentProfile(self):
         currentProfileName = list(self.profiles.keys())[self.var.get()]
         self.current_profile_options=self.profiles[currentProfileName]
-        self.updateCurrentProfile()
+        self.profileView.heading('#0', text=list(self.profiles.keys())[self.var.get()], anchor='w')
+        self.initTree()
         #self.profiles_Label.configure(text=self.var.get())
 
     def save_btn_click(self):
@@ -163,13 +161,9 @@ class main_Tab:
         profile_name = self.save_Entry.get()
         self.profiles[profile_name] = self.current_profile_options
         self.dumpProfiles()
+        #Необходимо решить проблему пересоздания листа профилей
         self.loadProfiles()
         self.saveDialog.destroy()
-        
-    def updateCurrentProfile(self):
-        self.profileView.collapse_all()
-        self.profileView.heading('#0', text=list(self.profiles.keys())[self.var.get()], anchor='w')
-        self.initTree()
 
     def initTree(self):
         if self.current_profile_options == {}:
@@ -179,18 +173,21 @@ class main_Tab:
             if not self.profileView.exists(key):
                 self.profileView.insert("", "end", key, text=key)
 
+            self.profileView.change_state(key, value[0])
+            value = value[1]
+
             if type(value) == type("1"):
                 i = 0
                 for func_key in self.modules[key][0].keys():
                     func_key = func_key.replace('\n', ' ')
 
-                    if not self.profileView.exists(key + func_key):
-                        self.profileView.insert(key, "end", key + func_key, text=func_key)
+                    if not self.profileView.exists(key + func_key + "_" + str(i)):
+                        self.profileView.insert(key, "end", key + func_key + "_" + str(i), text=func_key)
 
                     if value[i] == '0':
-                        self.profileView.change_state(key + func_key, 'unchecked')
+                        self.profileView.change_state(key + func_key + "_" + str(i), 'unchecked')
                     if value[i] == '1':
-                        self.profileView.change_state(key + func_key, 'checked')
+                        self.profileView.change_state(key + func_key + "_" + str(i), 'checked')
                     i+=1
             else:
                 j = 0
@@ -198,18 +195,64 @@ class main_Tab:
 
                     if not self.profileView.exists(second_key):
                         self.profileView.insert(key, "end", second_key, text=second_key)
+                    
+                    self.profileView.change_state(second_key, second_value[0])
+                    second_value = second_value[1]
 
                     if type(value[second_key]) == type("1"):
                         i = 0
                         for func_key in self.modules[key][0][j].keys():
                             func_key = func_key.replace('\n', ' ')
 
-                            if not self.profileView.exists(second_key + func_key):
-                                self.profileView.insert(second_key, "end", second_key + func_key, text=func_key)
+                            if not self.profileView.exists(second_key + func_key + "_" + str(i)):
+                                self.profileView.insert(second_key, "end", second_key + func_key + "_" + str(i), text=func_key)
                             
                             if value[second_key][i] == '0':
-                                self.profileView.change_state(second_key + func_key, 'unchecked')
+                                self.profileView.change_state(second_key + func_key + "_" + str(i), 'unchecked')
                             if value[second_key][i] == '1':
-                                self.profileView.change_state(second_key + func_key, 'checked')
+                                self.profileView.change_state(second_key + func_key + "_" + str(i), 'checked')
                             i+=1
                     j+=1
+                
+    def check_uncheck_item(self, event):
+        x, y, widget = event.x, event.y, event.widget
+        elem = widget.identify("element", x, y)
+        if "image" in elem:
+            # a box was clicked
+            item = self.profileView.identify_row(y)
+            parents = []
+            parent = widget.parent(item)
+            i = 0
+            while parent != '':
+                parents.append(parent)
+                parent = widget.parent(parent)
+            if parents:
+                tag = self.profileView.item(parents[0], "tags")
+                self.current_profile_options[parents[0]][0] = tag[0]
+                if len(parents) == 2:
+                    tag = self.profileView.item(parents[1], "tags")
+                    self.current_profile_options[parents[0]][1][parents[1]][0] = tag[0]
+                    tag = self.profileView.item(item, "tags")
+
+                    i = int(item.split('_')[1])
+                    varL = self.current_profile_options[parents[0]][1][parents[1]][1][0:i]
+                    varR = self.current_profile_options[parents[0]][1][parents[1]][1][i + 1:]
+
+                    if "checked" in tag:
+                        self.current_profile_options[parents[0]][1][parents[1]][1] = varL + '1' + varR
+                    else:
+                        self.current_profile_options[parents[0]][1][parents[1]][1] = varL + '0' + varR
+                else:
+                    tag = self.profileView.item(item, "tags")
+
+                    i = int(item.split('_')[1])
+                    varL = self.current_profile_options[parents[0]][1][0:i]
+                    varR = self.current_profile_options[parents[0]][1][i + 1:]
+
+                    if "checked" in tag:
+                        self.current_profile_options[parents[0]][1] = varL + '1' + varR
+                    else:
+                        self.current_profile_options[parents[0]][1] = varL + '0' + varR
+            else:
+                pass
+                #TODO

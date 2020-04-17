@@ -122,5 +122,3 @@ class Module():
         self.header = header
         self.first_module_frame.configure(text=first_module_header)
         self.second_module_frame.configure(text=second_module_header)
-
-    

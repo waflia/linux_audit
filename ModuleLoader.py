@@ -34,6 +34,8 @@ class Loader():
         self.nb.bind('<<NotebookTabChanged>>', self.change_tab)
         self.nb.pack(side=LEFT, fill=BOTH, expand=1)
         self.nb.select(self.nb.index(0))
+
+        self.main.changeCurrentProfile()
         
     def read_modules(self):
         try:
@@ -106,8 +108,6 @@ class Loader():
                 newTab.set_pass(self.password)
                 newTab.set_logs(self.log)
                 self.main.modules[tab_name] = [newTab.functions, newTab.vars]
-            else:
-                self.modules[tab_name] = ''
 
     def change_tab(self, event):
         try:
