@@ -1,5 +1,6 @@
 import os
 import json
+import copy
 from tkinter import ttk
 import tkinter as tk
 from ttkwidgets import CheckboxTreeview
@@ -30,6 +31,7 @@ class main_Tab:
         self.current_Frame = ttk.LabelFrame(rightFrame, text='Текущий профиль')
         self.btn_Frame = ttk.Frame(rightFrame)
 
+
         #Область данных об аудиторе
         fio_Label = ttk.Label(self.auditor_Frame, text='ФИО')
         self.fio_Entry = ttk.Entry(self.auditor_Frame, font=16, width = 30)
@@ -52,6 +54,8 @@ class main_Tab:
         self.ysb = ttk.Scrollbar(self.current_Frame, orient='vertical', command=self.profileView.yview)
         self.profileView.configure(yscroll=self.ysb.set)
         ttk.Style().configure('Vertical.TScrollbar', troughcolor='#f6f4f2', relief=tk.GROOVE)
+        ttk.Style().configure('Treeview', background="#f6f4f2")
+        ttk.Style().configure('Frame', background="#f6f4f2")
 
         #Размещения на фреймах
         leftFrame.pack(side=tk.LEFT, anchor='nw', fill=tk.Y)
@@ -98,7 +102,9 @@ class main_Tab:
             self.org_Label.grid_remove()
 
     def loadProfiles(self):
-        self.profiles_Frame.pack(side=tk.TOP, anchor='sw', padx=5, pady = 10, fill=tk.BOTH, expand=1)
+        for child in self.profiles_Frame.interior.winfo_children():
+            child.destroy()
+        #self.profiles_Frame.pack(side=tk.TOP, anchor='sw', padx=5, pady = 10, fill=tk.BOTH, expand=1)
         try:
             with open(self.main_path + '/profiles.json') as file:
                 self.profiles = json.load(file)
@@ -119,7 +125,7 @@ class main_Tab:
 
     def changeCurrentProfile(self):
         currentProfileName = list(self.profiles.keys())[self.var.get()]
-        self.current_profile_options=self.profiles[currentProfileName]
+        self.current_profile_options=copy.deepcopy(self.profiles[currentProfileName])
         self.profileView.heading('#0', text=list(self.profiles.keys())[self.var.get()], anchor='w')
         self.initTree()
         #self.profiles_Label.configure(text=self.var.get())
@@ -161,9 +167,9 @@ class main_Tab:
         profile_name = self.save_Entry.get()
         self.profiles[profile_name] = self.current_profile_options
         self.dumpProfiles()
-        #Необходимо решить проблему пересоздания листа профилей
         self.loadProfiles()
         self.saveDialog.destroy()
+        self.initTree()
 
     def initTree(self):
         if self.current_profile_options == {}:
@@ -199,7 +205,7 @@ class main_Tab:
                     self.profileView.change_state(second_key, second_value[0])
                     second_value = second_value[1]
 
-                    if type(value[second_key]) == type("1"):
+                    if type(value[second_key][1]) == type("1"):
                         i = 0
                         for func_key in self.modules[key][0][j].keys():
                             func_key = func_key.replace('\n', ' ')
@@ -207,9 +213,9 @@ class main_Tab:
                             if not self.profileView.exists(second_key + func_key + "_" + str(i)):
                                 self.profileView.insert(second_key, "end", second_key + func_key + "_" + str(i), text=func_key)
                             
-                            if value[second_key][i] == '0':
+                            if value[second_key][1][i] == '0':
                                 self.profileView.change_state(second_key + func_key + "_" + str(i), 'unchecked')
-                            if value[second_key][i] == '1':
+                            if value[second_key][1][i] == '1':
                                 self.profileView.change_state(second_key + func_key + "_" + str(i), 'checked')
                             i+=1
                     j+=1
@@ -227,21 +233,21 @@ class main_Tab:
                 parents.append(parent)
                 parent = widget.parent(parent)
             if parents:
-                tag = self.profileView.item(parents[0], "tags")
-                self.current_profile_options[parents[0]][0] = tag[0]
+                tag = self.profileView.item(parents[1], "tags")
+                self.current_profile_options[parents[1]][0] = tag[0]
                 if len(parents) == 2:
-                    tag = self.profileView.item(parents[1], "tags")
-                    self.current_profile_options[parents[0]][1][parents[1]][0] = tag[0]
+                    tag = self.profileView.item(parents[0], "tags")
+                    self.current_profile_options[parents[1]][1][parents[0]][0] = tag[0]
                     tag = self.profileView.item(item, "tags")
 
                     i = int(item.split('_')[1])
-                    varL = self.current_profile_options[parents[0]][1][parents[1]][1][0:i]
-                    varR = self.current_profile_options[parents[0]][1][parents[1]][1][i + 1:]
+                    varL = self.current_profile_options[parents[1]][1][parents[0]][1][0:i]
+                    varR = self.current_profile_options[parents[1]][1][parents[0]][1][i + 1:]
 
                     if "checked" in tag:
-                        self.current_profile_options[parents[0]][1][parents[1]][1] = varL + '1' + varR
+                        self.current_profile_options[parents[1]][1][parents[0]][1] = varL + '1' + varR
                     else:
-                        self.current_profile_options[parents[0]][1][parents[1]][1] = varL + '0' + varR
+                        self.current_profile_options[parents[1]][1][parents[0]][1] = varL + '0' + varR
                 else:
                     tag = self.profileView.item(item, "tags")
 
@@ -254,5 +260,26 @@ class main_Tab:
                     else:
                         self.current_profile_options[parents[0]][1] = varL + '0' + varR
             else:
-                pass
-                #TODO
+                tag = self.profileView.item(item, "tags")
+                self.current_profile_options[item][0] = tag[0]
+                profile_1 = ''
+                for child in self.profileView.get_children(item):
+                    children = self.profileView.get_children(child)
+                    if children != ():
+                        tag = self.profileView.item(child, "tags")
+                        self.current_profile_options[item][1][child][0] = tag[0]
+                        profile = ''
+                        for s_child in self.profileView.get_children(child):
+                            tag = self.profileView.item(s_child, "tags")
+                            if 'checked' in tag:
+                                profile += '1'
+                            else:
+                                profile += '0'
+                        self.current_profile_options[item][1][child][1] = profile
+                    else:
+                        tag = self.profileView.item(child, "tags")
+                        if 'checked' in tag:
+                            profile_1 += '1'
+                        else:
+                            profile_1 += '0'
+                        self.current_profile_options[item][1] = profile_1
