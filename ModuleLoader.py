@@ -107,7 +107,8 @@ class Loader():
                 newTab = tab(tabFrame)
                 newTab.set_pass(self.password)
                 newTab.set_logs(self.log)
-                self.main.modules[tab_name] = [newTab.functions, newTab.vars]
+                self.main.modules_config[tab_name] = [newTab.functions, newTab.vars]
+                self.main.modules[tab_name] = newTab
 
     def change_tab(self, event):
         try:

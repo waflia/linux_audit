@@ -12,7 +12,8 @@ class main_Tab:
     def __init__(self, master, main_path = ''):
         self.main_path = main_path
         self.master = master
-        self.modules = {} #{module_name : }
+        self.modules_config = {} #{module_name : }
+        self.modules = {}
 
         self.fio = ''
         self.org = ''
@@ -77,8 +78,23 @@ class main_Tab:
         self.profileView.bind("<Button-1>", self.check_uncheck_item, True)
         
     def run_audit(self):
-        pass
+        for tab_name, tab in self.modules.items():
+            tab.run_audit()
 
+    def sync_vars(self):
+        for tab_name, tab in self.modules.items():
+            if type(self.current_profile_options[tab_name][1]) != type({}): 
+                i = 0
+                for var in tab.vars:
+                    var.set(self.current_profile_options[tab_name][1][i])
+                    i+=1
+            else:
+                i = 0
+                for second_tab_name, second_tab in self.current_profile_options[tab_name][1].items():
+                    for j in range(len(second_tab[1])):
+                        tab.vars[i].set(second_tab[1][j])
+                        i+=1
+                    
     def accept_auditor(self):
         if  self.fio_OK_btn.cget('text') == 'OK':
             self.fio = self.fio_Entry.get()
@@ -128,6 +144,7 @@ class main_Tab:
         self.current_profile_options=copy.deepcopy(self.profiles[currentProfileName])
         self.profileView.heading('#0', text=list(self.profiles.keys())[self.var.get()], anchor='w')
         self.initTree()
+        self.sync_vars()
         #self.profiles_Label.configure(text=self.var.get())
 
     def save_btn_click(self):
@@ -184,7 +201,7 @@ class main_Tab:
 
             if type(value) == type("1"):
                 i = 0
-                for func_key in self.modules[key][0].keys():
+                for func_key in self.modules_config[key][0].keys():
                     func_key = func_key.replace('\n', ' ')
 
                     if not self.profileView.exists(key + func_key + "_" + str(i)):
@@ -207,7 +224,7 @@ class main_Tab:
 
                     if type(value[second_key][1]) == type("1"):
                         i = 0
-                        for func_key in self.modules[key][0][j].keys():
+                        for func_key in self.modules_config[key][0][j].keys():
                             func_key = func_key.replace('\n', ' ')
 
                             if not self.profileView.exists(second_key + func_key + "_" + str(i)):
@@ -233,32 +250,32 @@ class main_Tab:
                 parents.append(parent)
                 parent = widget.parent(parent)
             if parents:
-                tag = self.profileView.item(parents[1], "tags")
-                self.current_profile_options[parents[1]][0] = tag[0]
+                tag = self.profileView.item(parents[-1], "tags")
+                self.current_profile_options[parents[-1]][0] = tag[0]
                 if len(parents) == 2:
                     tag = self.profileView.item(parents[0], "tags")
-                    self.current_profile_options[parents[1]][1][parents[0]][0] = tag[0]
+                    self.current_profile_options[parents[-1]][1][parents[-2]][0] = tag[0]
                     tag = self.profileView.item(item, "tags")
 
                     i = int(item.split('_')[1])
-                    varL = self.current_profile_options[parents[1]][1][parents[0]][1][0:i]
-                    varR = self.current_profile_options[parents[1]][1][parents[0]][1][i + 1:]
+                    varL = self.current_profile_options[parents[-1]][1][parents[-2]][1][0:i]
+                    varR = self.current_profile_options[parents[-1]][1][parents[-2]][1][i + 1:]
 
                     if "checked" in tag:
-                        self.current_profile_options[parents[1]][1][parents[0]][1] = varL + '1' + varR
+                        self.current_profile_options[parents[-1]][1][parents[-2]][1] = varL + '1' + varR
                     else:
-                        self.current_profile_options[parents[1]][1][parents[0]][1] = varL + '0' + varR
+                        self.current_profile_options[parents[-1]][1][parents[-2]][1] = varL + '0' + varR
                 else:
                     tag = self.profileView.item(item, "tags")
 
                     i = int(item.split('_')[1])
-                    varL = self.current_profile_options[parents[0]][1][0:i]
-                    varR = self.current_profile_options[parents[0]][1][i + 1:]
+                    varL = self.current_profile_options[parents[-1]][1][0:i]
+                    varR = self.current_profile_options[parents[-1]][1][i + 1:]
 
                     if "checked" in tag:
-                        self.current_profile_options[parents[0]][1] = varL + '1' + varR
+                        self.current_profile_options[parents[-1]][1] = varL + '1' + varR
                     else:
-                        self.current_profile_options[parents[0]][1] = varL + '0' + varR
+                        self.current_profile_options[parents[-1]][1] = varL + '0' + varR
             else:
                 tag = self.profileView.item(item, "tags")
                 self.current_profile_options[item][0] = tag[0]
@@ -282,4 +299,5 @@ class main_Tab:
                             profile_1 += '1'
                         else:
                             profile_1 += '0'
-                        self.current_profile_options[item][1] = profile_1
+                        self.current_profile_options[item][1] = profile_1  
+        self.sync_vars()
