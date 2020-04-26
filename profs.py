@@ -89,11 +89,11 @@ class main_Tab:
                     var.set(self.current_profile_options[tab_name][1][i])
                     i+=1
             else:
-                i = 0
+                i = len(tab.vars) - 1
                 for second_tab_name, second_tab in self.current_profile_options[tab_name][1].items():
-                    for j in range(len(second_tab[1])):
+                    for j in range(len(second_tab[1]) - 1, -1, -1):
                         tab.vars[i].set(second_tab[1][j])
-                        i+=1
+                        i-=1
                     
     def accept_auditor(self):
         if  self.fio_OK_btn.cget('text') == 'OK':
