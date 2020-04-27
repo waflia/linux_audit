@@ -32,7 +32,6 @@ class main_Tab:
         self.current_Frame = ttk.LabelFrame(rightFrame, text='Текущий профиль')
         self.btn_Frame = ttk.Frame(rightFrame)
 
-
         #Область данных об аудиторе
         fio_Label = ttk.Label(self.auditor_Frame, text='ФИО')
         self.fio_Entry = ttk.Entry(self.auditor_Frame, font=16, width = 30)
@@ -55,7 +54,7 @@ class main_Tab:
         self.ysb = ttk.Scrollbar(self.current_Frame, orient='vertical', command=self.profileView.yview)
         self.profileView.configure(yscroll=self.ysb.set)
         ttk.Style().configure('Vertical.TScrollbar', troughcolor='#f6f4f2', relief=tk.GROOVE)
-        ttk.Style().configure('Treeview', background="#f6f4f2")
+        ttk.Style().configure('Treeview', background="#ffffff")
         ttk.Style().configure('Frame', background="#f6f4f2")
 
         #Размещения на фреймах
@@ -132,7 +131,7 @@ class main_Tab:
         self.var = tk.IntVar()
         for i in range(prof_count):
             tk.Radiobutton(self.profiles_Frame.interior, variable=self.var, value=i,
-                             indicator=0,height=3, text=list(self.profiles.keys())[i], 
+                             indicator=0,height=3, text=list(self.profiles.keys())[i], selectcolor="#f19572", activebackground="#f19572",
                              command=self.changeCurrentProfile).pack(side=tk.TOP, anchor='nw', fill=tk.X, padx=5, pady=2)
     
     def dumpProfiles(self):
