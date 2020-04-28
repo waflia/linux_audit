@@ -69,7 +69,7 @@ class Loader():
         tab = None
         for x in dir(module):
             obj = getattr(module, x)
-            if inspect.isclass(obj) and issubclass(obj, Module):#"_Tab" in obj.__name__
+            if inspect.isclass(obj) and "_Tab" in obj.__name__ and issubclass(obj, Module):
                 tab = obj
                 break
         if tab != None:
@@ -79,6 +79,8 @@ class Loader():
             newTab = tab(tabFrame)
             newTab.set_pass(self.password)
             newTab.set_logs(self.log)
+            self.main.modules_config[tab_name] = [newTab.functions, newTab.vars]
+            self.main.modules[tab_name] = newTab
 
     def delModule(self, Tab_Name, index = None):
         self.modules.pop(Tab_Name)
@@ -126,5 +128,7 @@ class Loader():
                 self.addModule(module_name, filename, spec)
             if filenames == ():
                 self.nb.select(self.nb.index(0))
+        elif self.nb.tab(self.nb.select(), 'text') == 'Main':
+            self.main.initTree()
 
         
