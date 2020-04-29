@@ -36,14 +36,17 @@ class Net_Tab(Module):
         self.vulnerable = False
         result = command_seq('sudo iptables -V', self.password)
         if result[1] == '':
-            self.result.insert('end', 'Статус iptables в системе:\n{0}\n'.format(result[0]))
+            self.result.insert('end', ' Статус iptables в системе:\n{0}\n'.format(result[0]))
             res = command_seq('sudo iptables -L', self.password)
             if res[1] == '': 
-                self.result.insert('end', 'Правила iptables:\n{0}\n'.format(res[0]))
+                self.result.insert('end', ' Правила iptables:\n{0}\n'.format(res[0]))
+                self.result.insert('end', "\n Рекомендация:\n" 
+                + " Проверьте правильность настроек правил iptables" 
+                + " и при необходимости измените их с помощью команды iptables <options>", 'recommendations')
             else:
-                self.result.insert('end', 'Межсетевой экран настроен неправильно или не настроены правила iptables\n', 'warning')
-                self.result.insert('end', "Рекомендация:\n"
-		        + "Установите необходимые пакеты и настройте правила для межсетевого экрана\n\n", 'recommendations')
+                self.result.insert('end', ' Межсетевой экран настроен неправильно или не настроены правила iptables\n', 'warning')
+                self.result.insert('end', " Рекомендация:\n"
+		        + " Установите необходимые пакеты и настройте правила для межсетевого экрана\n\n", 'recommendations')
 
         else:
             self.result.insert('end', 'Межсетевой экран отключен или не установлен.\n', 'warning')
@@ -58,14 +61,19 @@ class Net_Tab(Module):
         if result[1] == '':
             res = command_seq("cat < /etc/hosts.allow| grep -v '#'", self.password)
             if res[0].replace('\n', '') != '': 
-                self.result.insert('end', 'Правила hosts.allow:\n{0}\n'.format(res[0]))
+                self.result.insert('end', ' Правила hosts.allow:\n{0}\n'.format(res[0]))
+                self.result.insert('end', "\n Рекомендация:\n"
+            + " Проверьте, не нарушают ли безопасность правила" 
+            + " /etc/hosts.allow и при необходимости отредактируйте их", 'recommendations')
             else:
-                self.result.insert('end', 'В файле /etc/hosts.allow нет настроенных правил\n')
+                self.result.insert('end', ' В файле /etc/hosts.allow нет настроенных правил\n')
+            self.result.insert('end', "\n Рекомендация:\n"
+            + "Настройте файл /etc/hosts.allow путем добавления необходимых правил", 'recommendations')
         else:
-            self.result.insert('end', 'Файл /etc/hosts.allow не существует.\n', 'warning')
-            self.result.insert('end', "Рекомендация:\n"
-		        + "Создайте файл /etc/hosts.allow с режимом доступа 644" 
-                + "и владельцем root, также довьте ненобходимые правила фильтрации в файл\n\n", 'recommendations')
+            self.result.insert('end', ' Файл /etc/hosts.allow не существует.\n', 'warning')
+            self.result.insert('end', " Рекомендация:\n"
+		        + " Создайте файл /etc/hosts.allow с режимом доступа 644" 
+                + " и владельцем root, также довьте ненобходимые правила фильтрации в файл\n\n", 'recommendations')
 
     def check_hosts_deny(self):
         self.result.insert('end', '\n{}\n\n'.format('Анализ файла /etc/hosts.deny'), 'title')
@@ -75,14 +83,19 @@ class Net_Tab(Module):
         if result[1] == '':
             res = command_seq("cat < /etc/hosts.deny| grep -v '#'", self.password)
             if res[0].replace('\n', '') != '': 
-                self.result.insert('end', 'Правила hosts.deny:\n{0}\n'.format(res[0]))
+                self.result.insert('end', ' Правила hosts.deny:\n{0}\n'.format(res[0]))
+                self.result.insert('end', "\n Рекомендация:\n"
+            + " Проверьте, не нарушают ли безопасность правила" 
+            + " /etc/hosts.deny и при необходимости отредактируйте их", 'recommendations')
             else:
-                self.result.insert('end', 'В файле /etc/hosts.deny нет настроенных правил\n')
+                self.result.insert('end', ' В файле /etc/hosts.deny нет настроенных правил\n')
+                self.result.insert('end', "\n Рекомендация:\n"
+            + "Настройте файл /etc/hosts.deny путем добавления необходимых правил", 'recommendations')
         else:
-            self.result.insert('end', 'Файл /etc/hosts.deny не существует.\n', 'warning')
-            self.result.insert('end', "Рекомендация:\n"
-		        + "Создайте файл /etc/hosts.deny с режимом доступа 644" 
-                + "и владельцем root, также довьте необходимые правила фильтрации в файл\n\n", 'recommendations')
+            self.result.insert('end', ' Файл /etc/hosts.deny не существует.\n', 'warning')
+            self.result.insert('end', " Рекомендация:\n"
+		        + " Создайте файл /etc/hosts.deny с режимом доступа 644" 
+                + " и владельцем root, также добавьте необходимые правила фильтрации в файл\n\n", 'recommendations')
 
     def check_ssh_sshd(self):
         self.result.insert('end', '\n{}\n\n'.format('Проверка сатуса сервиса ssh'), 'title')
@@ -90,23 +103,26 @@ class Net_Tab(Module):
         self.vulnerable = False
         result = command_seq('service ssh status', self.password)
         if result[1] == '':
-            self.result.insert('end', 'Статус ssh в системе:\n{0}\n'.format(result[0]))
+            self.result.insert('end', ' Статус ssh в системе:\n{0}\n'.format(result[0]))
             res = command_seq("sudo cat < /etc/ssh/ssh_config| grep -v '#'")[0].split('\n')
-            self.result.insert('end', 'Настройки ssh:\n')
+            self.result.insert('end', ' Настройки ssh:\n')
             for row in res:
                 if row != '':
                     self.result.insert('end', '\t' + row.strip() + '\n')
 
             res = command_seq("sudo cat < /etc/ssh/sshd_config| grep -v '#'")[0].split('\n')
-            self.result.insert('end', '\nНастройки sshd:\n')
+            self.result.insert('end', '\n Настройки sshd:\n')
             for row in res:
                 if row != '':
                     self.result.insert('end', '\t' + row.strip() + '\n')
+            self.result.insert('end', "\n Рекомендация:\n"
+            + "Убедитесь, что настройки ssh и sshd не создают угроз безопасности системы."
+            + "При необходимости отредактируйте файлы /etc/ssh/ssh_config и /etc/ssh/sshd_config", 'recommendations')
         else:
-            self.result.insert('end', 'Сервис ssh отсутствует в системе.\n', 'warning')
-            self.result.insert('end', "Рекомендация:\n"
-		        + "Проверьте наличие данной службы в ее конфигурационном" 
-                + "файле в /etc/init.d либо в /etc/services.\n\n", 'recommendations')
+            self.result.insert('end', ' Сервис ssh отсутствует в системе.\n', 'warning')
+            self.result.insert('end', " Рекомендация:\n"
+		        + " Проверьте наличие данной службы в ее конфигурационном" 
+                + " файле в /etc/init.d либо в /etc/services.\n\n", 'recommendations')
 
     def check_ports(self):
         self.result.insert('end', '\n{text}\n\n'.format(text='Проверка открытых TCP и UDP портов'), 'title')
@@ -118,20 +134,22 @@ class Net_Tab(Module):
             for row in list(filter(None, tcp_status)):
                 splitted_row = list(filter(None, row.split(' ')))
                 self.result.insert('end', ' {0:<4} {1:<17} {2:<17} {3:<}\n'.format(*splitted_row))
-            self.result.insert('end', "Рекомендация:\n" 
-                                + "Проверьте необходимость открытых TCP - портов.", 'recommendations')
+            self.result.insert('end', " Рекомендация:\n" 
+                                + " Проверьте необходимость открытых TCP - портов. При необходимости закройте их", 'recommendations')
         else:
-            self.result.insert('end', '{}\n'.format('Открытые TCP порты не обнаружены'), 'clear')
+            self.result.insert('end', '{}\n'.format(' Открытые TCP порты не обнаружены'), 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
 
         if udp_status != ['']:
-            self.result.insert('end', 'Открытые UDP порты: \n')
+            self.result.insert('end', ' Открытые UDP порты: \n')
             for row in list(filter(None, udp_status)):
                 splitted_row = list(filter(None, row.split(' ')))
                 self.result.insert('end', ' {0:<4} {1:<17} {2:<17} {3:<}\n'.format(*splitted_row))
-            self.result.insert('end', "Рекомендация:\n" 
-                                + "Проверьте необходимость открытых UDP - портов.", 'recommendations')
+            self.result.insert('end', " Рекомендация:\n" 
+                                + " Проверьте необходимость открытых UDP - портов. При необходимости зкройте их", 'recommendations')
         else:
             self.result.insert('end', '{}\n'.format('\n Открытые UDP порты не обнаружены\n'), 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         return
 
     def check_sockets(self):
@@ -142,11 +160,12 @@ class Net_Tab(Module):
             self.result.insert('end', ' Список открытых сокетов: \n')
             for row in sockets:
                 self.result.insert('end', ' {}\n'.format(row))
-            self.result.insert('end', "Рекомендация:\n" 
-                + "Проверьте необходимость открытых сокетов в системе, " 
-                + "и, если необходимо, закройте ненужные сокеты с помощью межсетевого экрана", 'recommendations')
+            self.result.insert('end', " Рекомендация:\n" 
+                + " Проверьте необходимость открытых сокетов в системе, " 
+                + " и, если необходимо, закройте ненужные сокеты с помощью межсетевого экрана", 'recommendations')
         else:
-            self.result.insert('end', 'Открытые сокеты не обнаружены\n', 'clear')
+            self.result.insert('end', ' Открытые сокеты не обнаружены\n', 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         return
 
     def check_ext_ports(self):
@@ -156,14 +175,15 @@ class Net_Tab(Module):
         if err == '':
             if ext_ports != '':
                 self.result.insert('end', ' Список внешних открытых портов: \n {}'.format(ext_ports))
-                self.result.insert('end', "Рекомендация:\n" 
-                + "Проверьте, нужны ли определенные открытые порты в системе." 
-                + "Закройте ненужные порты с помощью установки для них правил межсетевого экрана.\n\n", 'recommendations')
+                self.result.insert('end', " Рекомендация:\n" 
+                + " Проверьте, нужны ли определенные открытые порты в системе." 
+                + " Закройте ненужные порты с помощью установки для них правил межсетевого экрана.\n\n", 'recommendations')
             else:
                 self.result.insert('end', ' Открытые внешние порты не найдены\n', 'clear')
+                self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
             self.result.insert('end', ' Утилита nmap не установлена\n' 
-            + 'Для продолжения необходимо установить утилиту nmap\n', 'recommendations')
+            + ' Для продолжения необходимо установить утилиту nmap\n', 'recommendations')
         return
 
     def check_vulnerable_ports(self):
@@ -177,12 +197,13 @@ class Net_Tab(Module):
                 for port in ext_ports:
                     if port in self.vulnerable_ports:
                         vulnerable = True
-                        self.result.insert('end', '  Открыт опасный порт: {}\n'.format(port), 'recommendations')
+                        self.result.insert('end', '  Открыт опасный порт: {}\n'.format(port), 'warning')
                 if not vulnerable:
                     self.result.insert('end', ' Опасные порты не найдены\n', 'clear')
-                else: self.result.insert('end', "Рекомендация:\n"
+                    self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
+                else: self.result.insert('end', " Рекомендация:\n"
                 + "Проверьте, нужны ли определенные открытые порты в системе." 
-                + "Закройте ненужные порты с помощью установки для них правил межсетевого экрана.\n\n")
+                + "Закройте ненужные порты с помощью установки для них правил межсетевого экрана.\n\n", 'recommendations')
             else:
                 self.result.insert('end', ' Опасные порты не найдены\n', 'clear')
         else:
@@ -205,6 +226,7 @@ class Net_Tab(Module):
                 vulnerable = True
             else:
                 self.result.insert('end', ' Нет подключенных терминалов\n', 'clear')
+                self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
 
             if root_terms != '':
                 root_terms = root_terms.split('\n')
@@ -214,10 +236,11 @@ class Net_Tab(Module):
                 vulnerable = True
             else:
                 self.result.insert('end', ' Терминалы подключенные от имени root не обнаружены\n\n', 'clear')
+                self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
             
-            if vulnerable: self.result.insert('end', "Рекомендация:\n"
-            + "Следите за событиями терминалов, особенно если вход на терминал произошел от имени root.\n" 
-            + "Проанализируйте систему на предмет взлома с " 
+            if vulnerable: self.result.insert('end', " Рекомендация:\n"
+            + " Следите за событиями терминалов, особенно если вход на терминал произошел от имени root.\n" 
+            + " Проанализируйте систему на предмет взлома с " 
             + "помощью спецпрограмм, если обнаруживаете, что" 
             + "запущенные процессы явно Вам не принадлежат.\n\n", 'recommendations')
 

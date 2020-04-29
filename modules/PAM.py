@@ -30,22 +30,23 @@ class PAM_Tab(Module):
         
         for prof in result:
             if prof != '':
-                self.result.insert('end', 'Профиль: {}\n'.format(prof))
+                self.result.insert('end', ' Профиль: {}\n'.format(prof))
 
-        self.result.insert('end', '{}\n'.format('\nВажные профили PAM, отсутствующие в системе\n'), 'warning')
+        self.result.insert('end', '{}\n'.format('\n Важные профили PAM, отсутствующие в системе\n'), 'warning')
         for prof in self.profiles:
             if prof in result:
                 continue
             else:
-                self.result.insert('end', 'Профиль: {} отсутствует в системе\n'.format(prof), 'recommendations')
+                self.result.insert('end', ' Профиль: {} отсутствует в системе\n'.format(prof), 'recommendations')
                 self.vulnerable = True
         if self.vulnerable:
-            self.result.insert('end', '\n{}\n'.format('Внимание! Некоторые важные модули отсутсвуют в системе.\n'), 'warning')
-            self.result.insert('end', "Рекомендация:\n"
-		        + "Проверьте необходимость модулей выше и при " 
+            self.result.insert('end', '\n{}\n'.format(' Внимание! Некоторые важные модули отсутсвуют в системе.\n'), 'warning')
+            self.result.insert('end', " Рекомендация:\n"
+		        + " Проверьте необходимость модулей выше и при " 
                 + "необходимости добавьте добавьте соответствующие профили в папку /etc/pamd\n\n", 'recommendations') 
         else:
-            self.result.insert('end', '{}\n'.format("Профили для всех важных системных модулей присутстыую!\n"), 'clear')
+            self.result.insert('end', '{}\n'.format(" Профили для всех важных системных модулей присутстыую!\n"), 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         return
 
     def checkVulnerableParameters(self):
@@ -59,18 +60,19 @@ class PAM_Tab(Module):
             profile = command_seq('cat < /etc/pam.d/{}'.format(prof))[0]
             if 'sufficient' in profile:
                 self.vulnerable = True
-                self.result.insert("end", 'Профиль {} имеет опцию sufficient\n'.format(prof), 'recommendations')
+                self.result.insert("end", ' Профиль {} имеет опцию sufficient\n'.format(prof), 'recommendations')
             if 'optional' in profile:
                 self.vulnerable = True
-                self.result.insert("end", 'Профиль {} имеет опцию optional\n'.format(prof), 'recommendations')
+                self.result.insert("end", ' Профиль {} имеет опцию optional\n'.format(prof), 'recommendations')
             
         if self.vulnerable:
-            self.result.insert('end', '{}\n'.format('Некоторые профили PAM содержат потенцальную уязвимость .\n'), 'warning')
-            self.result.insert('end', "Рекомендация:\n"
-	        + "Проанализируйте эти объекты PAM и перепишите их содержимое," 
+            self.result.insert('end', '{}\n'.format(' Некоторые профили PAM содержат потенцальную уязвимость .\n'), 'warning')
+            self.result.insert('end', " Рекомендация:\n"
+	        + " Проанализируйте эти объекты PAM и перепишите их содержимое," 
             + "если обнаружите, что они действительно образуют уязвимость в безопасности.\n\n", 'recommendations') 
         else:
-            self.result.insert('end', '{}\n'.format("Все профили PAM безопасны!\n"))
+            self.result.insert('end', '{}\n'.format(" Все профили PAM безопасны!\n"))
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         return
 
     def checkPamFiles(self):
@@ -84,12 +86,13 @@ class PAM_Tab(Module):
         for filepers in result:
             if filepers[3] != 'root' and filepers[2] != 'root':
                 self.vulnerable = True
-                self.result("end", 'У файла {} владелец или группа владельца не root\n',format(filepers[8]), 'recommendations')
+                self.result("end", ' У файла {} владелец или группа владельца не root\n',format(filepers[8]), 'recommendations')
             
         if self.vulnerable:
-            self.result.insert('end', '{}\n'.format('Вышеуказанные файлы модуля PAM содержат потенциальную уязвимость.\n'), 'warning')
-            self.result.insert('end', "Рекомендация:\n"
-	        + "Проанализируйте эти объекты PAM и если необходимо исправьте нарушения.\n\n", 'recommendations') 
+            self.result.insert('end', '{}\n'.format(' Вышеуказанные файлы модуля PAM содержат потенциальную уязвимость.\n'), 'warning')
+            self.result.insert('end', " Рекомендация:\n"
+	        + " Проанализируйте эти объекты PAM и если необходимо исправьте нарушения.\n\n", 'recommendations') 
         else:
-            self.result.insert('end', '{}\n'.format("Все файлы модуля PAM безопасны!\n"), 'clear')
+            self.result.insert('end', '{}\n'.format(" Все файлы модуля PAM безопасны!\n"), 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         return

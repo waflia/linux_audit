@@ -51,11 +51,12 @@ class Base_Tab(Module):
         if not vulnerable:
             self.result.insert('end', ' Объекты с полными правами для категории "Все остальные" не обнаружены\n',
             'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
-            self.result.insert('end', "\nРекомендация:\n"
+            self.result.insert('end', "\n Рекомендация:\n"
 	        + "Необходимо исключить полный доступ постановкой на каталоги прав 755,"
             + " у файлов - прав 644 .\n" 
-            +"Либо поставить любую другую комбинацию прав, не нарушающую безопасности" 
+            +"Либо поставить любую другую комбинацию прав, не нарушающую безопасности " 
             + "данного объекта и общей безопасности системы.\n\n" , 'recommendations')
         return
 
@@ -77,9 +78,10 @@ class Base_Tab(Module):
         if not vulnerable:
             self.result.insert('end', ' Объекты с неправильно настроенными правами владельца не обнаружены\n',
             'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
-            self.result.nsert('end', "\nРекомендация:\n"
-	        + "Необходимо установить правильные права владельца на объект,\n"
+            self.result.nsert('end', "\n Рекомендация:\n"
+	        + "Необходимо установить правильные права владельца на объект с помощью команды chmod,\n"
             +"Либо поставить любую другую комбинацию прав, не нарушающую безопасности" 
             + "данного объекта и общей безопасности системы.\n\n" , 'recommendations')
         return
@@ -96,10 +98,11 @@ class Base_Tab(Module):
 
         if not vulnerable:
             self.result.insert('end', ' Режимы доступа системных объектов соответствуют рекомендуемым\n', 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
-            self.result.insert('end', "\nРекомендация:\n"
+            self.result.insert('end', "\n Рекомендация:\n"
 	        + "Убедитесь, что режимы доступа системных объектов не создают потенциальных угроз.\n"
-            +"Если необходимо, то измените их на рекомендуемые.\n\n", 'recommendations')
+            +"Если необходимо, то измените их на рекомендуемые c помощью команды chmod <perms> object.\n\n", 'recommendations')
         return
 
     def check_none_permissions(self):
@@ -119,8 +122,9 @@ class Base_Tab(Module):
 
         if not vulnerable:
             self.result.insert('end', ' Права доступа к объектам не нарушены\n', 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
-            self.result.insert('end', "\nРекомендация:\n"
+            self.result.insert('end', "\n Рекомендация:\n"
 	        + "Необходимо проверить режимы доступа объектов на доступность файлов и каталогов\n"
             +"Если необходимо, то измените режимы доступа с помощью команд chmod <perms> object.\n\n", 
             'recommendations' )
@@ -140,10 +144,11 @@ class Base_Tab(Module):
 
         if not vulnerable:
             self.result.insert('end', ' Необходимые права на чтение каталогов не нарушены\n', 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
-            self.result.nsert('end', "\nРекомендация:\n"
+            self.result.шnsert('end', "\n Рекомендация:\n"
 	        + "Необходимо исключить полный доступ постановкой на каталоги прав 755 ,\n"
-            + " у файлов - прав 644 .\n" 
+            + " у файлов - прав 644  с помощью команды chmod <perms> object.\n" 
             +"Либо поставить любую другую комбинацию прав, не нарушающую безопасности"
             + " данного объекта и общей безопасности системы.\n\n" , 'recommendations')
         return
@@ -167,8 +172,9 @@ class Base_Tab(Module):
 
         if not vulnerable:
             self.result.insert('end', ' Объекты без владельца и группы не обнаружены\n', 'clear')
+            self.result.insert('end', " \n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
-            self.result.insert('end', "\nРекомендация:\n"
+            self.result.insert('end', "\n Рекомендация:\n"
 	        + 'Необходимо установить объектам владельца отдельного от "nobody" и группы "nogroup"\n'
             + 'с помощью команды chown <user> object и chgrp <group> object.\n\n' , 'recommendations')
         return
@@ -185,11 +191,12 @@ class Base_Tab(Module):
 
         if not vulnerable:
             self.result.insert('end', ' Объекты с SUID-битом не обнаружены\n', 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
-            self.result.nsert('end', "\nРекомендация:\n"
+            self.result.nsert('end', "\n Рекомендация:\n"
 	        + "Убедитесь, что SUID-бит необходим и не нарушает безопасности системы.\n"
             + "Либо установите любую другую комбинацию прав, не нарушающую" 
-            + "безопасности данного объекта и общей безопасности системы.\n\n" , 'recommendations')
+            + "безопасности данного объекта и общей безопасности системы с помощью команды chmod <perms> object.\n\n" , 'recommendations')
         return
 
     def check_sgid(self):
@@ -204,11 +211,12 @@ class Base_Tab(Module):
 
         if not vulnerable:
             self.result.insert('end', ' Объекты со SGID-битом не обнаружены\n', 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
-            self.result.nsert('end', "\nРекомендация:\n"
+            self.result.nsert('end', "\n Рекомендация:\n"
 	        + "Убедитесь, что SGID-бит необходим и не нарушает безопасности системы.\n"
             + "Либо установите любую другую комбинацию прав, не нарушающую" 
-            + "безопасности данного объекта и общей безопасности системы.\n\n", 'recommendations' )
+            + "безопасности данного объекта и общей безопасности системы с помощью команды chmod <perms> object.\n\n", 'recommendations' )
         return
 
     def check_sticky(self):
@@ -223,9 +231,10 @@ class Base_Tab(Module):
 
         if not vulnerable:
             self.result.insert('end', ' Объекты со Sticky-битом не обнаружены\n', 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
-            self.result.insert('end', "\nРекомендация:\n"
+            self.result.insert('end', "\n Рекомендация:\n"
 	        + "Убедитесь, что Sticky-бит необходим и не нарушает безопасности системы.\n"
             + "Либо установите любую другую комбинацию прав, не нарушающую" 
-            + "безопасности данного объекта и общей безопасности системы.\n\n", 'recommendations')
+            + "безопасности данного объекта и общей безопасности системы с помощью команды chmod <perms> object.\n\n", 'recommendations')
         return

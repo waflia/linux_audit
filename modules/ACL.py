@@ -9,10 +9,10 @@ class ACL_Tab(Module):
         super().__init__(master, True)
 
         self.functions = {
-            "Файлы с ACL": self.check_acl,
-            "Полные права": self.check_fullpermissions,
-            "Права владельца": self.check_owner_permissions,
-            "Проверка ошибок": self.check_err
+            "Поиск файлов с ACL": self.check_acl,
+            "Файлы с полными правами\n для пользователя и группы": self.check_fullpermissions,
+            "Файлы с неправильными\n правами владельца": self.check_owner_permissions,
+            "Проверка ошибок при\n установке прав ACL": self.check_err
             }   
 
         self.setFuncs(self.functions)
@@ -34,11 +34,12 @@ class ACL_Tab(Module):
                 vulnerable = True
         if not vulnerable:
             self.result.insert('end', ' Объекты с правами ACL не обнаружены\n', 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
-            self.result.insert('end', "Рекомендация:\nУбедитесь, что права ACL на данные объекты необходимы.\n"  
-                               + "В противном случае удалите или измените их на комбинацию," 
+            self.result.insert('end', " Рекомендация:\nУбедитесь, что права ACL на данные объекты необходимы.\n"  
+                               + " В противном случае удалите или измените их на комбинацию," 
                                + " не нарушающую безопасности системы, командой:\n" 
-                                + "setfacl -m u:username:rwx obj_name.\n\n", 'recommendations')
+                                + " setfacl -m u:username:rwx obj_name.\n\n", 'recommendations')
         return
 
     def check_fullpermissions(self):
@@ -58,11 +59,12 @@ class ACL_Tab(Module):
                     vulnerable = True
         if not vulnerable:
             self.result.insert('end', ' Объекты c полным доступом по маске ACL не обнаружены\n', 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
-            self.result.insert('end', "Рекомендация:\nУбедитесь, что наличие полного доступа по маске не нарушает безопасности системы.\n"  
-                               + "В противном случае удалите или измените маску ACL на комбинацию," 
+            self.result.insert('end', " Рекомендация:\nУбедитесь, что наличие полного доступа по маске не нарушает безопасности системы.\n"  
+                               + " В противном случае удалите или измените маску ACL на комбинацию," 
                                + " не нарушающую безопасности системы, командой:\n" 
-                                + "setfacl -m m:rwx obj_name.\n\n", 'recommendations')
+                                + " setfacl -m m:rwx obj_name.\n\n", 'recommendations')
         return
 
     def check_owner_permissions(self):
@@ -93,11 +95,12 @@ class ACL_Tab(Module):
                         vulnerable = True
         if not vulnerable:
             self.result.insert('end', ' Объекты с полными правами доступа ACL не обнаружены\n', 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
-            self.result.insert('end', "Рекомендация:\nУбедитесь, что полные права ACL на данные объекты для субъекты и группы необходимы.\n"  
-            + "В противном случае удалите или измените их на комбинацию," 
+            self.result.insert('end', " Рекомендация:\nУбедитесь, что полные права ACL на данные объекты для субъекты и группы необходимы.\n"  
+            + " В противном случае удалите или измените их на комбинацию," 
             + " не нарушающую безопасности системы, командой:\n" 
-            + "setfacl -m u:username:rwx obj_name\nsetfacl -m g:groupname:rwx obj_name\n\n", 'recommendations')
+            + " setfacl -m u:username:rwx obj_name\nsetfacl -m g:groupname:rwx obj_name\n\n", 'recommendations')
         return
 
     def check_err(self):
@@ -128,6 +131,7 @@ class ACL_Tab(Module):
 
         if not vulnerable:
             self.result.insert('end', ' Объекты с ошибкой при настройке ACL не обнаружены\n', 'clear')
+            self.result.insert('end', "\n Рекомендация: Действий не требуется\n", 'recommendations')
         else:
             self.result.insert('end', "Рекомендация:\nУбедитесь, что права ACL на данные объекты необходимы и установлены правильно.\n"  
                                + "В противном случае удалите или измените их на комбинацию," 
