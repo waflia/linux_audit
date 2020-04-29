@@ -1,5 +1,6 @@
 import json
 import importlib
+from importlib import util
 import inspect
 import os
 from tkinter import ttk
@@ -62,7 +63,7 @@ class Loader():
         self.write_modules()
         module = None
         if spec != None:
-            module = importlib.util.module_from_spec(spec)
+            module = util.module_from_spec(spec)
             spec.loader.exec_module(module)
         else:
             module = importlib.import_module(module_name)
@@ -91,8 +92,8 @@ class Loader():
         for tab_name, module_name in self.modules.items():
             module = None
             try:
-                spec = importlib.util.spec_from_file_location(tab_name, module_name)
-                module = importlib.util.module_from_spec(spec)
+                spec = util.spec_from_file_location(tab_name, module_name)
+                module = util.module_from_spec(spec)
                 spec.loader.exec_module(module)
             except: 
                 self.modules[tab_name] = ''
@@ -124,7 +125,7 @@ class Loader():
             filenames = fd.askopenfilenames(filetypes=(("Python files", "*.py"), ("All files", "*.*")))
             for filename in filenames:
                 module_name = filename.split('/')[-1].split('.')[0]
-                spec = importlib.util.spec_from_file_location(module_name, filename)
+                spec = util.spec_from_file_location(module_name, filename)
                 self.addModule(module_name, filename, spec)
             if filenames == ():
                 self.nb.select(self.nb.index(0))
