@@ -243,13 +243,14 @@ class main_Tab:
         if "image" in elem:
             # a box was clicked
             item = self.profileView.identify_row(y)
+            children = self.profileView.get_children(item)
             parents = []
             parent = widget.parent(item)
             i = 0
             while parent != '':
                 parents.append(parent)
                 parent = widget.parent(parent)
-            if parents:
+            if parents and children == ():
                 tag = self.profileView.item(parents[-1], "tags")
                 self.current_profile_options[parents[-1]][0] = tag[0]
                 if len(parents) == 2:
