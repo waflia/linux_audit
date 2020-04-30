@@ -6,3 +6,5 @@ MANIFEST
 setup.py
 main.spec
 build/
+test/
+modules.json
