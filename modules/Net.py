@@ -102,15 +102,17 @@ class Net_Tab(Module):
         self.result.update()
         self.vulnerable = False
         result = command_seq('service ssh status', self.password)
+        result2 = command_seq("sudo cat /etc/services|grep -s ssh|awk '{print $1}'")[0].split('\n')
         if result[1] == '':
             self.result.insert('end', ' Статус ssh в системе:\n{0}\n'.format(result[0]))
-            res = command_seq("sudo cat < /etc/ssh/ssh_config| grep -v '#'")[0].split('\n')
+        elif 'ssh' in result2:
+            res = command_seq("sudo cat < /etc/ssh/ssh_config")[0].replace('#', '').split('\n')
             self.result.insert('end', ' Настройки ssh:\n')
             for row in res:
                 if row != '':
                     self.result.insert('end', '\t' + row.strip() + '\n')
 
-            res = command_seq("sudo cat < /etc/ssh/sshd_config| grep -v '#'")[0].split('\n')
+            res = command_seq("sudo cat /etc/ssh/sshd_config")[0].replace('#', '').split('\n')
             self.result.insert('end', '\n Настройки sshd:\n')
             for row in res:
                 if row != '':
