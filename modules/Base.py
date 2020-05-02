@@ -31,12 +31,12 @@ class Base_Tab(Module):
                     "Объекты со Sticky-битом": self.check_sticky}
         
         self.setFuncs(self.functions)
-        self.setParams(header = "базовой СКД")
+        self.setParams(header="базовой СКД")
 
     def check_mask(self):
         self.result.insert('end', '{text}\n\n'.format(text='Проверка текущей маски'), 'title')
         self.result.update()
-        umask = command_seq('sudo cat /etc/login.defs | grep UMASK', self.password)[0].split('\n')
+        umask = command_seq('sudo cat /etc/login.defs | grep UMASK| grep -v "#"', self.password)[0].split('\n')
         self.result.insert('end', ' Текущая маска пользователя: {}\n'.format(umask[-2]))
         return
 
